@@ -29,15 +29,15 @@ const LobbyPage = () => {
   const isHost = roomState.players[0] && roomState.players[0].playerName === playerName;
   const gameCanStart = roomState.players.length > 1;
 
+  console.log({ isHost, gameCanStart })
+
   return (
     <Fader>
       <FlexContainer>
         <Text>{`Room ${roomName} - Lobby`}</Text>
-        {gameCanStart && isHost && (
-          <Fader when={nameIsValid(roomName) && nameIsValid(playerName)}>
-            <Button onClick={() => {}/* Start game */}>Start game</Button>
-          </Fader>
-        )}
+        <Fader when={gameCanStart && isHost}>
+          <Button onClick={() => {}/* Start game */}>Start game</Button>
+        </Fader>
       </FlexContainer>
     </Fader>
   );

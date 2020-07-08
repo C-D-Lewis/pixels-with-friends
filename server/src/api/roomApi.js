@@ -168,7 +168,7 @@ const monitorPlayerLastSeen = () => {
         const diff = now - player.lastSeen;
         if (diff < PLAYER_LAST_SEEN_MAX_MS) return;
 
-        console.log(`Removing player ${player.playerName} after ${diff / 1000}s`);
+        console.log(`Removing player ${player.playerName} from ${room.roomName} after ${diff / 1000}s`);
         room.players.splice(room.players.indexOf(player), 1);
       });
     });

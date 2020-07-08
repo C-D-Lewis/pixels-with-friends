@@ -55,7 +55,7 @@ const LandingPage = () => {
   return (
     <Fader>
       <FlexContainer>
-        <Text>Enter a room name to begin!</Text>
+        <Text>Enter a player name and room name to begin!</Text>
         <Input
           placeholder="Player name..."
           onChange={v => dispatch(setPlayerName(v))}/>
