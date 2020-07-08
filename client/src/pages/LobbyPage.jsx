@@ -6,6 +6,7 @@ import Button from '../components/Button.jsx';
 import Fader from '../components/Fader.jsx';
 import FlexContainer from '../components/FlexContainer.jsx';
 import Input from '../components/Input.jsx';
+import PlayerList from '../components/PlayerList.jsx';
 import Text from '../components/Text.jsx';
 import apiService from '../services/apiService';
 
@@ -29,12 +30,11 @@ const LobbyPage = () => {
   const isHost = roomState.players[0] && roomState.players[0].playerName === playerName;
   const gameCanStart = roomState.players.length > 1;
 
-  console.log({ isHost, gameCanStart })
-
   return (
     <Fader>
       <FlexContainer>
         <Text>{`Room ${roomName} - Lobby`}</Text>
+        <PlayerList />
         <Fader when={gameCanStart && isHost}>
           <Button onClick={() => {}/* Start game */}>Start game</Button>
         </Fader>

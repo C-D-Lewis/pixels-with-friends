@@ -7,7 +7,7 @@ const MAX_PLAYERS = 8;
 /** Interval between lastSeen checks. */
 const PLAYER_LAST_SEEN_INTERVAL_MS = 5000;
 /** Max time after which a player is deemed MIA */
-const PLAYER_LAST_SEEN_MAX_MS = 30000;
+const PLAYER_LAST_SEEN_MAX_MS = 15000;
 
 // All games stored only in memory - they are short lived
 const rooms = [];
