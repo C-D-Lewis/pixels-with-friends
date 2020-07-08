@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPlayerName, setRoomName, setRoomState, setPage, setServerUrl } from '../actions';
 import { Pages } from '../constants';
@@ -20,6 +20,14 @@ const nameIsValid = name => (
   name.length > 1 &&
   !name.includes(' ')
 );
+
+/**
+ * Get a query param.
+ *
+ * @param {string} name - Param to find.
+ * @returns {string} found value.
+ */
+const getQueryParam = name => new URLSearchParams(window.location.search).get(name);
 
 /**
  * LandingPage component.
@@ -53,18 +61,28 @@ const LandingPage = () => {
     }
   };
 
+  // When the component is mounted
+  useEffect(() => {
+    const serverUrlParam = getQueryParam('serverUrl');
+    if (serverUrlParam) dispatch(setServerUrl(serverUrlParam));
+    const roomNameParam = getQueryParam('roomName');
+    if (roomNameParam) dispatch(setRoomName(roomNameParam));
+  }, []);
+
   return (
     <Fader>
       <FlexContainer>
         <Text>Enter the following details to begin!</Text>
         <Input
           placeholder="Server URL..."
+          value={serverUrl}
           onChange={v => dispatch(setServerUrl(v))}/>
         <Input
           placeholder="Player name..."
           onChange={v => dispatch(setPlayerName(v))}/>
         <Input
           placeholder="Room name..."
+          value={roomName}
           onChange={v => dispatch(setRoomName(v))}/>
         <Fader when={serverUrl !== null && nameIsValid(roomName) && nameIsValid(playerName)}>
           <Button onClick={() => enterRoom(roomName)}>Join room</Button>

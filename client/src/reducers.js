@@ -14,19 +14,19 @@ const buildReducer = (firstValue, subreducers) => (state = firstValue, action) =
       : state;
 
 export const rootReducer = combineReducers({
-  roomName: buildReducer(null, {
+  roomName: buildReducer('', {
     SET_ROOM_NAME: (state, { roomName }) => roomName,
   }),
   roomState: buildReducer(null, {
     SET_ROOM_STATE: (state, { roomState }) => roomState,
   }),
-  playerName: buildReducer(null, {
+  playerName: buildReducer('', {
     SET_PLAYER_NAME: (state, { playerName }) => playerName,
   }),
   page: buildReducer(Pages.Landing, {
     SET_PAGE: (state, { page }) => page,
   }),
-  serverUrl: buildReducer(null, {
+  serverUrl: buildReducer('', {
     SET_SERVER_URL: (state, { serverUrl }) => serverUrl,
   }),
 });

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Provider, useSelector } from 'react-redux';
+import { Provider, useSelector, useDispatch } from 'react-redux';
 import ReactDOM from 'react-dom';
 import { Pages } from './constants';
+import { setServerUrl, setRoomName } from './actions';
 import store from './store';
 import LandingPage from './pages/LandingPage.jsx';
 import LobbyPage from './pages/LobbyPage.jsx';

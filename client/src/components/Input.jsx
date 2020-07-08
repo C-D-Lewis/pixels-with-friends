@@ -6,9 +6,10 @@ import React from 'react';
  * @param {Object} props - Component props.
  * @returns {HTMLElement}
  */
-const Input = ({ placeholder, onChange }) => (
+const Input = ({ placeholder, value, onChange }) => (
   <input
     type="text"
+    value={value}
     style={{
       fontSize: '1.2rem',
       color: 'black',
