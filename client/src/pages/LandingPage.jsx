@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setPlayerName, setRoomName, setRoom, setPage } from '../actions';
 import { Pages } from '../constants';
 import Button from '../components/Button.jsx';
+import Fader from '../components/Fader.jsx';
 import FlexContainer from '../components/FlexContainer.jsx';
 import Input from '../components/Input.jsx';
 import Text from '../components/Text.jsx';
@@ -51,18 +52,20 @@ const LandingPage = () => {
   };
 
   return (
-    <FlexContainer>
-      <Text>Enter a room name to begin!</Text>
-      <Input
-        placeholder="Player name..."
-        onChange={v => dispatch(setPlayerName(v))}/>
-      <Input
-        placeholder="Room name..."
-        onChange={v => dispatch(setRoomName(v))}/>
-      {nameIsValid(roomName) && nameIsValid(playerName) && (
-        <Button onClick={() => enterRoom(roomName)}>Join room</Button>
-      )}
-    </FlexContainer>
+    <Fader>
+      <FlexContainer>
+        <Text>Enter a room name to begin!</Text>
+        <Input
+          placeholder="Player name..."
+          onChange={v => dispatch(setPlayerName(v))}/>
+        <Input
+          placeholder="Room name..."
+          onChange={v => dispatch(setRoomName(v))}/>
+        <Fader when={nameIsValid(roomName) && nameIsValid(playerName)}>
+          <Button onClick={() => enterRoom(roomName)}>Join room</Button>
+        </Fader>
+      </FlexContainer>
+    </Fader>
   );
 };
 

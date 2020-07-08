@@ -13,7 +13,7 @@ const Input = ({ placeholder, onChange }) => (
       fontSize: '1.2rem',
       color: 'black',
       backgroundColor: '#fff',
-      margin: '5px 0px',
+      margin: '10px 0px',
       padding: '5px 5px',
       textAlign: 'center',
       outline: 'none',
