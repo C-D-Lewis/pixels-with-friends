@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setPlayerName, setRoomName, setRoomState, setPage } from '../actions';
+import { setPlayerName, setRoomName, setRoomState, setPage, setServerUrl } from '../actions';
 import { Pages } from '../constants';
 import Button from '../components/Button.jsx';
 import Fader from '../components/Fader.jsx';
@@ -29,8 +29,9 @@ const nameIsValid = name => (
 const LandingPage = () => {
   const dispatch = useDispatch();
 
-  const roomName = useSelector(state => state.roomName);
+  const serverUrl = useSelector(state => state.serverUrl);
   const playerName = useSelector(state => state.playerName);
+  const roomName = useSelector(state => state.roomName);
 
   /**
    * Enter the room as the player.
@@ -55,14 +56,17 @@ const LandingPage = () => {
   return (
     <Fader>
       <FlexContainer>
-        <Text>Enter a player name and room name to begin!</Text>
+        <Text>Enter the following details to begin!</Text>
+        <Input
+          placeholder="Server URL..."
+          onChange={v => dispatch(setServerUrl(v))}/>
         <Input
           placeholder="Player name..."
           onChange={v => dispatch(setPlayerName(v))}/>
         <Input
           placeholder="Room name..."
           onChange={v => dispatch(setRoomName(v))}/>
-        <Fader when={nameIsValid(roomName) && nameIsValid(playerName)}>
+        <Fader when={serverUrl !== null && nameIsValid(roomName) && nameIsValid(playerName)}>
           <Button onClick={() => enterRoom(roomName)}>Join room</Button>
         </Fader>
       </FlexContainer>

@@ -6,6 +6,20 @@ const API = 'http://localhost:5500';
 /** Room poll interval */
 const ROOM_POLL_INTERVAL_MS = 1000;
 
+const request = async (method, path, json) => {
+  const { serverUrl } = store.getState();
+
+  const apiUrl = `http://${serverUrl}:5500`;
+  const res = await fetch(`${apiUrl}${path}`, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    ...{ body: json ? JSON.stringify(json): null },
+  });
+
+  if (res.status > 400) throw new Error(`Error: ${await res.text()}`)
+  return await res.json();
+};
+
 /**
  * Get a room from the service.
  *
@@ -15,8 +29,7 @@ const getRoom = async () => {
   const { roomName, playerName } = store.getState();
   if (!roomName && !playerName) return;
 
-  const res = await fetch(`${API}/rooms/${roomName}?playerName=${playerName}`);
-  return await res.json();
+  return await request('GET', `/rooms/${roomName}?playerName=${playerName}`);
 };
 
 /**
@@ -27,14 +40,7 @@ const getRoom = async () => {
 const putPlayerInRoom = async () => {
   const { roomName, playerName } = store.getState();
 
-  const res = await fetch(`${API}/rooms/${roomName}/player`, {
-    headers: { 'Content-Type': 'application/json' },
-    method: 'put',
-    body: JSON.stringify({ playerName }),
-  });
-
-  if (res.status > 400) throw new Error(`Error: ${await res.text()}`)
-  return await res.json();
+  return await request('PUT', `/rooms/${roomName}/player`, { playerName });
 };
 
 /**

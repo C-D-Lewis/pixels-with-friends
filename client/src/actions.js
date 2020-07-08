@@ -41,3 +41,14 @@ export const setPage = page => ({
   type: 'SET_PAGE',
   page,
 });
+
+/**
+ * serverUrl reducer.
+ *
+ * @param {string} serverUrl - Current serverUrl state.
+ * @returns {Object} Action object.
+ */
+export const setServerUrl = serverUrl => ({
+  type: 'SET_SERVER_URL',
+  serverUrl,
+});

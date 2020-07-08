@@ -26,4 +26,7 @@ export const rootReducer = combineReducers({
   page: buildReducer(Pages.Landing, {
     SET_PAGE: (state, { page }) => page,
   }),
+  serverUrl: buildReducer(null, {
+    SET_SERVER_URL: (state, { serverUrl }) => serverUrl,
+  }),
 });
