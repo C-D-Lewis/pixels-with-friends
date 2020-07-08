@@ -5,6 +5,25 @@ import FlexContainer from './FlexContainer.jsx';
 import Text from './Text.jsx';
 
 /**
+ * HostPill component.
+ *
+ * @param {Object} props - Component props.
+ * @returns {HTMLElement}
+ */
+const HostPill = () => (
+  <div
+    style={{
+      backgroundColor: 'rgb(234, 186, 0)',
+      color: 'white',
+      padding: '3px 8px',
+      marginLeft: 10,
+      borderRadius: 50,
+    }}>
+    Host
+  </div>
+);
+
+/**
  * PlayerView component.
  *
  * @param {Object} props - Component props.
@@ -21,6 +40,7 @@ const PlayerView = ({ player, index }) => (
         marginRight: 10,
       }}/>
     <Text>{player.playerName}</Text>
+    {index === 0 && <HostPill />}
   </FlexContainer>
 );
 

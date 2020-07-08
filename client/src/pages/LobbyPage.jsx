@@ -33,7 +33,7 @@ const LobbyPage = () => {
   return (
     <Fader>
       <FlexContainer>
-        <Text>{`Room ${roomName} - Lobby`}</Text>
+        <Text>{`${roomName} - Lobby`}</Text>
         <PlayerList />
         <Fader when={gameCanStart && isHost}>
           <Button onClick={() => {}/* Start game */}>Start game</Button>

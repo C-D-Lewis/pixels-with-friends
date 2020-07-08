@@ -74,7 +74,7 @@ const LandingPage = () => {
       <FlexContainer>
         <Text>Enter the following details to begin!</Text>
         <Input
-          placeholder="Server URL..."
+          placeholder="Server..."
           value={serverUrl}
           onChange={v => dispatch(setServerUrl(v))}/>
         <Input
