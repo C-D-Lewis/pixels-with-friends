@@ -41,10 +41,14 @@ const LandingPage = () => {
   const playerName = useSelector(state => state.playerName);
   const roomName = useSelector(state => state.roomName);
 
+  const readyToJoin = serverUrl.length && nameIsValid(roomName) && nameIsValid(playerName);
+
   /**
    * Enter the room as the player.
    */
   const enterRoom = async () => {
+    if (!readyToJoin) return;
+
     try {
       // Ensure the room exists
       await apiService.getRoom();
@@ -84,7 +88,7 @@ const LandingPage = () => {
           placeholder="Room name..."
           value={roomName}
           onChange={v => dispatch(setRoomName(v))}/>
-        <Fader when={serverUrl !== null && nameIsValid(roomName) && nameIsValid(playerName)}>
+        <Fader when={readyToJoin}>
           <Button onClick={() => enterRoom(roomName)}>Join room</Button>
         </Fader>
       </FlexContainer>

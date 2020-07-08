@@ -22,20 +22,22 @@ const LobbyPage = () => {
   const roomName = useSelector(state => state.roomName);
   const playerName = useSelector(state => state.playerName);
 
-  useEffect(() => {
-    apiService.pollRoomState();
-  }, []);
-
-  // The host is the first player in the room
   const isHost = roomState.players[0] && roomState.players[0].playerName === playerName;
   const gameCanStart = roomState.players.length > 1;
+  const hostCanStartGame = gameCanStart && isHost;
+
+  useEffect(() => {
+    apiService.pollRoomState();
+
+    return () => apiService.stopPolling();
+  }, []);
 
   return (
     <Fader>
       <FlexContainer>
         <Text>{`${roomName} - Lobby`}</Text>
         <PlayerList />
-        <Fader when={gameCanStart && isHost}>
+        <Fader when={hostCanStartGame}>
           <Button onClick={() => {}/* Start game */}>Start game</Button>
         </Fader>
       </FlexContainer>

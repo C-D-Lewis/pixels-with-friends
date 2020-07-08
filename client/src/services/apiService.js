@@ -6,6 +6,8 @@ const API = 'http://localhost:5500';
 /** Room poll interval */
 const ROOM_POLL_INTERVAL_MS = 1000;
 
+let pollHandle;
+
 const request = async (method, path, json) => {
   const { serverUrl } = store.getState();
 
@@ -47,7 +49,7 @@ const putPlayerInRoom = async () => {
  * Poll the room state, and by doing so keep the player alive in the server's eyes.
  */
 const pollRoomState = () => {
-  setInterval(async () => {
+  pollHandle = setInterval(async () => {
     const { roomState } = store.getState();
     if (!roomState) return;
 
@@ -56,10 +58,16 @@ const pollRoomState = () => {
   }, ROOM_POLL_INTERVAL_MS);
 };
 
+/**
+ * Stop polling.
+ */
+const stopPolling = () => clearInternal(pollHandle);
+
 const apiService = {
   getRoom,
   putPlayerInRoom,
   pollRoomState,
+  stopPolling,
 };
 
 export default apiService;
