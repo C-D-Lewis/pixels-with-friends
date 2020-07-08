@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Provider, useSelector } from 'react-redux';
 import ReactDOM from 'react-dom';
 import { Pages } from './constants';
 import store from './store';
 import LandingPage from './pages/LandingPage.jsx';
+import LobbyPage from './pages/LobbyPage.jsx';
 import FlexContainer from './components/FlexContainer.jsx';
 import GameGrid from './components/GameGrid.jsx';
 import Title from './components/Title.jsx';
@@ -25,9 +26,7 @@ const Game = () => {
       }}>
       <Title>Pixels With Friends</Title>
       {page == Pages.Landing && <LandingPage />}
-      {page == Pages.Lobby && (
-        <div>Lobby</div>
-      )}
+      {page == Pages.Lobby && <LobbyPage />}
       {page == Pages.InGame && (
         <GameGrid grid={grid} />
       )}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setPlayerName, setRoomName, setRoom, setPage } from '../actions';
+import { setPlayerName, setRoomName, setRoomState, setPage } from '../actions';
 import { Pages } from '../constants';
 import Button from '../components/Button.jsx';
 import Fader from '../components/Fader.jsx';
@@ -38,12 +38,13 @@ const LandingPage = () => {
   const enterRoom = async () => {
     try {
       // Ensure the room exists
-      await apiService.getRoom(roomName);
+      await apiService.getRoom();
 
       // Add the player
-      const newRoomState = await apiService.putPlayerInRoom(roomName, playerName);
-      dispatch(setRoom(newRoomState));
+      const initialRoomState = await apiService.putPlayerInRoom();
+      dispatch(setRoomState(initialRoomState));
 
+      // Go to lobby
       dispatch(setPage(Pages.Lobby));
     } catch (e) {
       console.log(e);

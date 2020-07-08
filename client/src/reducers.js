@@ -17,8 +17,8 @@ export const rootReducer = combineReducers({
   roomName: buildReducer(null, {
     SET_ROOM_NAME: (state, { roomName }) => roomName,
   }),
-  room: buildReducer({}, {
-    SET_ROOM: (state, { room }) => room,
+  roomState: buildReducer(null, {
+    SET_ROOM_STATE: (state, { roomState }) => roomState,
   }),
   playerName: buildReducer(null, {
     SET_PLAYER_NAME: (state, { playerName }) => playerName,

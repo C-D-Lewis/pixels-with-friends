@@ -10,14 +10,14 @@ export const setRoomName = roomName => ({
 });
 
 /**
- * room reducer.
+ * roomState reducer.
  *
- * @param {string} room - Current room state.
+ * @param {string} roomState - Current roomState state.
  * @returns {Object} Action object.
  */
-export const setRoom = room => ({
-  type: 'SET_ROOM',
-  room,
+export const setRoomState = roomState => ({
+  type: 'SET_ROOM_STATE',
+  roomState,
 });
 
 /**
