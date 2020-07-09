@@ -175,6 +175,9 @@ const handlePostRoomSquare = (req, res) => {
   // Calculate points to award - TODO Magic shapes award more points
   existingPlayer.score += SCORE_AMOUNT_SINGLE;
 
+  // Find tiles surrounded for conversion
+  
+
   // Next player's turn - has to be done by name in case players drop out
   let currentPlayerIndex = existingRoom.players.indexOf(existingPlayer);
   currentPlayerIndex += 1;

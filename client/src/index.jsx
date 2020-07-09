@@ -25,8 +25,11 @@ const Game = () => {
   let backgroundColor = '#393939';
   if (roomState && page === Pages.InGame) {
     const currentPlayer = roomState.players.find(p => p.playerName === roomState.currentPlayer);
-    const currentPlayerIndex = roomState.players.indexOf(currentPlayer);
-    backgroundColor = PlayerColors[currentPlayerIndex].dark;
+    // They could have left
+    if (currentPlayer) {
+      const currentPlayerIndex = roomState.players.indexOf(currentPlayer);
+      backgroundColor = PlayerColors[currentPlayerIndex].dark;
+    }
   }
 
   return (
