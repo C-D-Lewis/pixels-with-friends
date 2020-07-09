@@ -80,6 +80,7 @@ const handleGetRoom = (req, res) => {
   // If room doesn't exist, create it
   let existingRoom = rooms.find(p => p.roomName === roomName);
   if (!existingRoom) {
+    console.log(`Room ${roomName} created`);
     existingRoom = createRoom(roomName);
     rooms.push(existingRoom);
   }
@@ -115,11 +116,11 @@ const handlePutRoomPlayer = (req, res) => {
   if (!playerName) return res.status(400).json({ error: 'playerName not specified' });
 
   // Player already exists?
-  // FIXME: Remove a player when they close the game to prevent ghosts
   const existingPlayer = existingRoom.players.find(p => p.playerName === playerName);
   if (existingPlayer) return res.status(409).json({ error: 'Player already in the room' });
 
   const newPlayer = createPlayer(playerName);
+  console.log(`Player ${playerName} joined ${roomName}`);
 
   // Mark the host, who must stay for the length of the game
   // The first player will also take the first move
@@ -145,6 +146,7 @@ const handlePutRoomInGame = (req, res) => {
   if (!existingRoom) return res.status(404).json({ error: 'Room not found' });
 
   // Set the game as in progress, clients poll for this
+  console.log(`Room ${roomName} is now in game`);
   existingRoom.inGame = true;
   return res.status(200).json(existingRoom);
 };
@@ -170,13 +172,14 @@ const handlePostRoomSquare = (req, res) => {
   if (!existingPlayer) return res.status(404).json({ error: 'Player not found' });
 
   // Set ownership - client validates it is free
+  console.log(`Player ${playerName} placed at ${col}:${row}`);
   existingRoom.grid[row][col].playerName = playerName;
 
   // Calculate points to award - TODO Magic shapes award more points
   existingPlayer.score += SCORE_AMOUNT_SINGLE;
 
   // Find tiles surrounded for conversion
-  
+
 
   // Next player's turn - has to be done by name in case players drop out
   let currentPlayerIndex = existingRoom.players.indexOf(existingPlayer);

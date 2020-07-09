@@ -11,9 +11,9 @@ import Text from './Text.jsx';
 const Footer = () => (
   <FlexContainer
     style={{
-      position: 'absolute',
-      bottom: 0,
       paddingBottom: 10,
+      height: '100%',
+      justifyContent: 'flex-end',
     }}>
     <Text
       style={{

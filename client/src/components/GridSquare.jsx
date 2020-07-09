@@ -18,6 +18,7 @@ const GridSquare = ({ square }) => {
   const roomState = useSelector(state => state.roomState);
 
   const myTurn = roomState.currentPlayer === playerName;
+  // FIXME: Handle a player leaving (not host)
   const ownerPlayer = roomState.players.find(p => p.playerName === square.playerName);
   const ownerIndex = roomState.players.indexOf(ownerPlayer);
 
