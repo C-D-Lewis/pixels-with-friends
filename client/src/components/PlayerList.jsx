@@ -29,20 +29,25 @@ const HostPill = () => (
  * @param {Object} props - Component props.
  * @returns {HTMLElement}
  */
-const PlayerView = ({ player, index }) => (
-  <FlexContainer style={{ flexDirection: 'row' }}>
-    <div
-      style={{
-        width: SQUARE_SIZE,
-        height: SQUARE_SIZE,
-        backgroundColor: PlayerColors[index],
-        borderRadius: 5,
-        marginRight: 10,
-      }}/>
-    <Text>{player.playerName}</Text>
-    {index === 0 && <HostPill />}
-  </FlexContainer>
-);
+const PlayerView = ({ roomState, index }) => {
+  const player = roomState.players[index];
+
+  return (
+    <FlexContainer style={{ flexDirection: 'row' }}>
+      <div
+        style={{
+          width: SQUARE_SIZE,
+          height: SQUARE_SIZE,
+          backgroundColor: PlayerColors[index],
+          borderRadius: 5,
+          marginRight: 10,
+        }}/>
+      <Text>{player.playerName}</Text>
+      {roomState.inGame == true && <Text style={{ marginLeft: 20 }}>{player.score} points</Text>}
+      {index === 0 && <HostPill />}
+    </FlexContainer>
+  );
+};
 
 /**
  * PlayerList component.
@@ -51,11 +56,13 @@ const PlayerView = ({ player, index }) => (
  * @returns {HTMLElement}
  */
 const PlayerList = () => {
-  const { players } = useSelector(state => state.roomState);
+  const roomState = useSelector(state => state.roomState);
+
+  // In game only - support score count and showing whose turn it is
 
   return (
-    <FlexContainer>
-      {players.map((p, i) => <PlayerView key={p.playerName} player={p} index={i} />)}
+    <FlexContainer style={{ alignItems: 'left' }}>
+      {roomState.players.map((p, i) => <PlayerView key={p.playerName} roomState={roomState} index={i} />)}
     </FlexContainer>
   );
 };

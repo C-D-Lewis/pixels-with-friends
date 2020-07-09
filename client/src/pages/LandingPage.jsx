@@ -51,7 +51,13 @@ const LandingPage = () => {
 
     try {
       // Ensure the room exists
-      await apiService.getRoom();
+      const currentRoomState = await apiService.getRoom();
+
+      // If room is inGame, player cannot join (yet?)
+      if (currentRoomState.inGame) {
+        alert('Game has already begun, sorry!');
+        return;
+      }
 
       // Add the player
       const initialRoomState = await apiService.putPlayerInRoom();
@@ -83,6 +89,7 @@ const LandingPage = () => {
           onChange={v => dispatch(setServerUrl(v))}/>
         <Input
           placeholder="Player name..."
+          value={playerName}
           onChange={v => dispatch(setPlayerName(v))}/>
         <Input
           placeholder="Room name..."

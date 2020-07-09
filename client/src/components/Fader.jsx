@@ -19,7 +19,7 @@ const Fader = ({ children, when = true }) => {
     <div
       style={{
         opacity: visible ? 1 : 0,
-        transition: '0.5s',
+        transition: '1s',
       }}>
       {children}
     </div>

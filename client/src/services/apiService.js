@@ -8,6 +8,13 @@ const ROOM_POLL_INTERVAL_MS = 1000;
 
 let pollHandle;
 
+/**
+ * Send a HTTP request.
+ *
+ * @param {string} method - HTTP method.
+ * @param {string} path - Path and query.
+ * @param {Object} json - Payload data, if any.
+ */
 const request = async (method, path, json) => {
   const { serverUrl } = store.getState();
 
@@ -46,6 +53,17 @@ const putPlayerInRoom = async () => {
 };
 
 /**
+ * Put a room into inGame state.
+ *
+ * @returns {Promise<Object>} Promise resolving to the room response.
+ */
+const putRoomInGame = async () => {
+  const { roomName } = store.getState();
+
+  return await request('PUT', `/rooms/${roomName}/inGame`);
+};
+
+/**
  * Poll the room state, and by doing so keep the player alive in the server's eyes.
  */
 const pollRoomState = () => {
@@ -61,11 +79,12 @@ const pollRoomState = () => {
 /**
  * Stop polling.
  */
-const stopPolling = () => clearInternal(pollHandle);
+const stopPolling = () => clearInterval(pollHandle);
 
 const apiService = {
   getRoom,
   putPlayerInRoom,
+  putRoomInGame,
   pollRoomState,
   stopPolling,
 };

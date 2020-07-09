@@ -6,8 +6,8 @@ import { setServerUrl, setRoomName } from './actions';
 import store from './store';
 import LandingPage from './pages/LandingPage.jsx';
 import LobbyPage from './pages/LobbyPage.jsx';
+import InGamePage from './pages/InGamePage.jsx';
 import FlexContainer from './components/FlexContainer.jsx';
-import GameGrid from './components/GameGrid.jsx';
 import Title from './components/Title.jsx';
 
 /**
@@ -28,9 +28,7 @@ const Game = () => {
       <Title>Pixels With Friends</Title>
       {page == Pages.Landing && <LandingPage />}
       {page == Pages.Lobby && <LobbyPage />}
-      {page == Pages.InGame && (
-        <GameGrid grid={grid} />
-      )}
+      {page == Pages.InGame && <InGamePage />}
     </FlexContainer>
   );
 };
