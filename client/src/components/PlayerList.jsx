@@ -31,7 +31,7 @@ const HostPill = () => (
  */
 const PlayerView = ({ roomState, index }) => {
   const player = roomState.players[index];
-  const isMyTurn = player.playerName === roomState.currentPlayer;
+  const isMyTurn = player.playerName === roomState.currentPlayer && roomState.inGame;
 
   return (
     <FlexContainer style={{ flexDirection: 'row' }}>

@@ -22,6 +22,7 @@ const rooms = [];
 const generateGridSquare = (row, col) => ({
   key: `${row}:${col}`,
   playerName: null,
+  /** some way of marking part of a magic shape */
 });
 
 /**

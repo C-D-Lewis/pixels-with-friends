@@ -4,10 +4,11 @@ import ReactDOM from 'react-dom';
 import { Pages, PlayerColors } from './constants';
 import { setServerUrl, setRoomName } from './actions';
 import store from './store';
+import FlexContainer from './components/FlexContainer.jsx';
+import Footer from './components/Footer.jsx';
+import InGamePage from './pages/InGamePage.jsx';
 import LandingPage from './pages/LandingPage.jsx';
 import LobbyPage from './pages/LobbyPage.jsx';
-import InGamePage from './pages/InGamePage.jsx';
-import FlexContainer from './components/FlexContainer.jsx';
 import Title from './components/Title.jsx';
 
 if (!window.config) alert('There is no config file');
@@ -40,6 +41,7 @@ const Game = () => {
       {page == Pages.Landing && <LandingPage />}
       {page == Pages.Lobby && <LobbyPage />}
       {page == Pages.InGame && <InGamePage />}
+      <Footer />
     </FlexContainer>
   );
 };
