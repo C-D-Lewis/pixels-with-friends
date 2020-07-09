@@ -31,6 +31,7 @@ const HostPill = () => (
  */
 const PlayerView = ({ roomState, index }) => {
   const player = roomState.players[index];
+  const isMyTurn = player.playerName === roomState.currentPlayer;
 
   return (
     <FlexContainer style={{ flexDirection: 'row' }}>
@@ -38,9 +39,10 @@ const PlayerView = ({ roomState, index }) => {
         style={{
           width: SQUARE_SIZE,
           height: SQUARE_SIZE,
-          backgroundColor: PlayerColors[index],
+          backgroundColor: PlayerColors[index].light,
           borderRadius: 5,
           marginRight: 10,
+          border: isMyTurn ? '2px solid white' : '2px solid black',
         }}/>
       <Text>{player.playerName}</Text>
       {roomState.inGame == true && <Text style={{ marginLeft: 20 }}>{player.score} points</Text>}

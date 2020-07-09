@@ -5,6 +5,7 @@ const {
   handleGetRoom,
   handlePutRoomPlayer,
   handlePutRoomInGame,
+  handlePostRoomSquare,
   monitorPlayerLastSeen,
 } = require('./api/roomApi');
 
@@ -23,6 +24,7 @@ const main = () => {
   app.get('/rooms/:roomName', handleGetRoom);
   app.put('/rooms/:roomName/player', handlePutRoomPlayer);
   app.put('/rooms/:roomName/inGame', handlePutRoomInGame);
+  app.post('/rooms/:roomName/square', handlePostRoomSquare);
 
   app.listen(PORT, () => console.log(`Server is listening on ${PORT}`));
 

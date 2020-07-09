@@ -13,7 +13,11 @@ const GameGrid = () => {
   const { grid } = useSelector(state => state.roomState);
 
   return (
-    <FlexContainer>
+    <FlexContainer style={{
+      backgroundColor: '#444B',
+      padding: 10,
+      borderRadius: 10,
+    }}>
       {grid.map((row) => (
         <FlexContainer key={row[0].key} style={{ flexDirection: 'row' }}>
           {row.map(square => <GridSquare key={square.key} square={square} />)}

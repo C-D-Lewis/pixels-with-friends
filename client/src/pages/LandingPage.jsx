@@ -73,8 +73,8 @@ const LandingPage = () => {
 
   // When the component is mounted
   useEffect(() => {
-    const serverUrlParam = getQueryParam('serverUrl');
-    if (serverUrlParam) dispatch(setServerUrl(serverUrlParam));
+    dispatch(setServerUrl(window.config.serverUrl));
+
     const roomNameParam = getQueryParam('roomName');
     if (roomNameParam) dispatch(setRoomName(roomNameParam));
   }, []);

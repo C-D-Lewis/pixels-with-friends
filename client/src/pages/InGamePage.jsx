@@ -25,7 +25,6 @@ const InGamePage = () => {
   // Check room state while waiting.
   useEffect(() => {
     apiService.pollRoomState();
-
     return () => apiService.stopPolling();
   }, []);
 
@@ -33,9 +32,12 @@ const InGamePage = () => {
   useEffect(() => {
     if (!roomState) return;
 
-    // Board update?
-
-    // Player score update?
+    // Host left?
+    if (!roomState.players.find(p => p.isHost)) {
+      alert('Host left the game');
+      dispatch(setPage(Pages.Landing));
+      return;
+    }
 
     // Did someone win? Did the game end?
   }, [roomState]);

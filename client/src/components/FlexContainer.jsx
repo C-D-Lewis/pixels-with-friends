@@ -6,8 +6,10 @@ import React from 'react';
  * @param {Object} props - Component props.
  * @returns {HTMLElement}
  */
-const FlexComponent = ({ children, style }) => (
+const FlexComponent = ({ children, className, onClick, style }) => (
   <div
+    className={className}
+    onClick={onClick}
     style={{
       display: 'flex',
       flexDirection: 'column',

@@ -21,14 +21,13 @@ const LobbyPage = () => {
   const roomState = useSelector(state => state.roomState);
   const playerName = useSelector(state => state.playerName);
 
-  const isHost = roomState.players[0] && roomState.players[0].playerName === playerName;
+  const isHost = !!roomState.players.find(p => p.playerName === playerName && p.isHost);
   const gameCanStart = roomState.players.length > 1;
-  const hostCanStartGame = gameCanStart && isHost;
+  const hostCanStartGame = isHost && gameCanStart;
 
   // Check room state while waiting.
   useEffect(() => {
     apiService.pollRoomState();
-
     return () => apiService.stopPolling();
   }, []);
 
@@ -36,6 +35,14 @@ const LobbyPage = () => {
   useEffect(() => {
     if (!roomState) return;
 
+    // Host left?
+    if (!roomState.players.find(p => p.isHost)) {
+      alert('Host left the game');
+      dispatch(setPage(Pages.Landing));
+      return;
+    }
+
+    // Game has begun
     if (roomState.inGame) dispatch(setPage(Pages.InGame));
   }, [roomState]);
 
@@ -65,7 +72,7 @@ const LobbyPage = () => {
             The host can start the game after two or more players have joined.
           </Text>
         )}
-        <Fader when={hostCanStartGame}>
+        <Fader when={hostCanStartGame === true}>
           <Button onClick={startGame}>Start game</Button>
         </Fader>
       </FlexContainer>

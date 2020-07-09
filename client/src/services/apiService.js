@@ -64,6 +64,20 @@ const putRoomInGame = async () => {
 };
 
 /**
+ * Take a square in the name of the player.
+ *
+ * @param {Object} square - Square taken.
+ * @returns {Promise<Object>} Promise resolving to the room response.
+ */
+const takeSquare = async (square) => {
+  const { roomName, playerName } = store.getState();
+  const [row, col] = square.key.split(':').map(p => parseInt(p));
+
+  const payload = { playerName, row, col };
+  return await request('POST', `/rooms/${roomName}/square`, payload);
+};
+
+/**
  * Poll the room state, and by doing so keep the player alive in the server's eyes.
  */
 const pollRoomState = () => {
@@ -85,6 +99,7 @@ const apiService = {
   getRoom,
   putPlayerInRoom,
   putRoomInGame,
+  takeSquare,
   pollRoomState,
   stopPolling,
 };
