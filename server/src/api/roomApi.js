@@ -1,5 +1,5 @@
-/** Size of the grid */
-const GRID_SIZE = 9;
+const { GRID_SIZE, createRoom, createPlayer } = require('../util');
+
 /** Max players */
 const MAX_PLAYERS = 8;
 /** Interval between lastSeen checks. */
@@ -11,61 +11,6 @@ const SCORE_AMOUNT_SINGLE = 10;
 
 // All games stored only in memory - they are short lived
 const rooms = [];
-
-/**
- * Generate a new grid square data object.
- *
- * @param {number} row - Row of the square.
- * @param {number} col - Column of the square.
- * @returns {Object} The grid square.
- */
-const generateGridSquare = (row, col) => ({
-  key: `${row}:${col}`,
-  playerName: null,
-  /** some way of marking part of a magic shape */
-});
-
-/**
- * Generate a fresh grid.
- *
- * @returns {Object[]} Array of rows.
- */
-const generateGrid = () => {
-  const result = [];
-  for (let row = 0; row < GRID_SIZE; row++) {
-    result[row] = [];
-    for (let col = 0; col < GRID_SIZE; col++) {
-      result[row][col] = generateGridSquare(row, col);
-    }
-  }
-  return result;
-};
-
-/**
- * Create a player object.
- *
- * @param {string} playerName - Player name as they chose.
- * @returns {Object} The player object.
- */
-const createPlayer = (playerName) => ({
-  playerName,
-  score: 0,
-  lastSeen: Date.now(),
-});
-
-/**
- * Create a room object.
- *
- * @param {string} rooomName - Room name as they chose.
- * @returns {Object} The room object.
- */
-const createRoom = (roomName) => ({
-  roomName,
-  players: [],
-  grid: generateGrid(),
-  currentPlayer: null,
-  inGame: false,
-});
 
 /**
  * Handle GET /room/:roomName requests.
@@ -152,6 +97,35 @@ const handlePutRoomInGame = (req, res) => {
 };
 
 /**
+ * Find instances where a player has surrounded another player's tiles.
+ *
+ * @param {Object} existingRoom - Room to search.
+ */
+const findSurroundedTiles = (existingRoom) => {
+  const { grid, players } = existingRoom;
+
+  for (let y = 1; y < GRID_SIZE - 2; y++) {
+    for (let x = 1; x < GRID_SIZE - 2; x++) {
+      const centerOwner = grid[y][x].playerName;
+      if (
+        grid[y - 1][x].playerName && grid[y - 1][x].playerName !== centerOwner &&
+        grid[y + 1][x].playerName && grid[y + 1][x].playerName !== centerOwner &&
+        grid[y][x + 1].playerName && grid[y][x + 1].playerName !== centerOwner &&
+        grid[y][x - 1].playerName && grid[y][x - 1].playerName !== centerOwner
+      ) {
+        // Surrounding player takes over
+        const newOwnerName = grid[y - 1][x].playerName;
+        console.log(`Player ${newOwnerName} claimed tile ${x}:${y} from ${centerOwner}`);
+        grid[y][x].playerName = newOwnerName;
+
+        const newOwnerPlayer = players.find(p => p.playerName === newOwnerName);
+        newOwnerPlayer.score += 5 * SCORE_AMOUNT_SINGLE;
+      }
+    }
+  }
+}
+
+/**
  * Handle POST /room/:roomName/square requests.
  *
  * @param {Object} req - Request object.
@@ -179,7 +153,7 @@ const handlePostRoomSquare = (req, res) => {
   existingPlayer.score += SCORE_AMOUNT_SINGLE;
 
   // Find tiles surrounded for conversion
-
+  findSurroundedTiles(existingRoom);
 
   // Next player's turn - has to be done by name in case players drop out
   let currentPlayerIndex = existingRoom.players.indexOf(existingPlayer);
@@ -199,6 +173,7 @@ const monitorPlayerLastSeen = () => {
     const now = Date.now();
     rooms.forEach((room) => {
       room.players.forEach((player) => {
+        // Players who didn't query roomState for a while get removed
         const diff = now - player.lastSeen;
         if (diff < PLAYER_LAST_SEEN_MAX_MS) return;
 
@@ -206,7 +181,7 @@ const monitorPlayerLastSeen = () => {
         room.players.splice(room.players.indexOf(player), 1);
       });
 
-      // If the room now has no player, free it up
+      // If the room now has no players, free it up
       if (room.players.length === 0) {
         console.log(`Removing empty room ${room.roomName}`);
         rooms.splice(rooms.indexOf(room), 1);
