@@ -47,7 +47,7 @@ const PlayerView = ({ roomState, index }) => {
           border: isMyTurn ? '2px solid white' : '2px solid black',
         }}/>
       <Text>{player.playerName}</Text>
-      {page !== Pages.Lobby && <Text style={{ marginLeft: 20 }}>{player.score} points</Text>}
+      {page !== Pages.Lobby && <Text style={{ marginLeft: 20 }}>{`${player.score} points`}</Text>}
       {index === 0 && <HostPill />}
     </FlexContainer>
   );
