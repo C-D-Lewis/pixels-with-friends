@@ -7,6 +7,7 @@ import Fader from '../components/Fader.jsx';
 import FlexContainer from '../components/FlexContainer.jsx';
 import Input from '../components/Input.jsx';
 import Text from '../components/Text.jsx';
+import audioService from '../services/audioService';
 import apiService from '../services/apiService';
 
 /**
@@ -51,17 +52,12 @@ const LandingPage = () => {
 
     try {
       // Ensure the room exists
-      const currentRoomState = await apiService.getRoom();
-
-      // If room is inGame, player cannot join (yet?)
-      if (currentRoomState.inGame) {
-        alert('Game has already begun, sorry!');
-        return;
-      }
+      await apiService.getRoom();
 
       // Add the player
-      const initialRoomState = await apiService.putPlayerInRoom();
-      dispatch(setRoomState(initialRoomState));
+      const newRoomState = await apiService.putPlayerInRoom();
+      audioService.play('join.mp3');
+      dispatch(setRoomState(newRoomState));
 
       // Go to lobby
       dispatch(setPage(Pages.Lobby));
@@ -83,10 +79,6 @@ const LandingPage = () => {
     <Fader>
       <FlexContainer>
         <Text>Enter the following details to begin!</Text>
-        <Input
-          placeholder="Server..."
-          value={serverUrl}
-          onChange={v => dispatch(setServerUrl(v))}/>
         <Input
           placeholder="Player name..."
           value={playerName}

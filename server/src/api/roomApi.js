@@ -1,4 +1,10 @@
-const { GRID_SIZE, createRoom, createPlayer } = require('../util');
+const {
+  GRID_SIZE,
+  SCORE_AMOUNT_SINGLE,
+  createRoom,
+  createPlayer,
+  findSurroundedSquares,
+} = require('../util');
 
 /** Max players */
 const MAX_PLAYERS = 8;
@@ -6,8 +12,6 @@ const MAX_PLAYERS = 8;
 const PLAYER_LAST_SEEN_INTERVAL_MS = 5000;
 /** Max time after which a player is deemed MIA */
 const PLAYER_LAST_SEEN_MAX_MS = 10000;
-/** Basic score for a single square */
-const SCORE_AMOUNT_SINGLE = 10;
 
 // All games stored only in memory - they are short lived
 const rooms = [];
@@ -23,23 +27,23 @@ const handleGetRoom = (req, res) => {
   if (!roomName) return res.status(400).json({ error: 'roomName not specified' });
 
   // If room doesn't exist, create it
-  let existingRoom = rooms.find(p => p.roomName === roomName);
-  if (!existingRoom) {
+  let room = rooms.find(p => p.roomName === roomName);
+  if (!room) {
+    room = createRoom(roomName);
+    rooms.push(room);
     console.log(`Room ${roomName} created`);
-    existingRoom = createRoom(roomName);
-    rooms.push(existingRoom);
   }
 
   // If a player requested, update the player's lastSeen
   const { playerName } = req.query;
   if (playerName) {
-    const existingPlayer = existingRoom.players.find(p => p.playerName === playerName);
-    if (existingPlayer) {
-      existingPlayer.lastSeen = Date.now();
+    const player = room.players.find(p => p.playerName === playerName);
+    if (player) {
+      player.lastSeen = Date.now();
     }
   }
 
-  return res.status(200).json(existingRoom);
+  return res.status(200).json(room);
 };
 
 /**
@@ -50,32 +54,25 @@ const handleGetRoom = (req, res) => {
  */
 const handlePutRoomPlayer = (req, res) => {
   const { roomName } = req.params;
-  if (!roomName) return res.status(400).json({ error: 'roomName not specified' });
-  const existingRoom = rooms.find(p => p.roomName === roomName);
-  if (!existingRoom) return res.status(404).json({ error: 'Room not found' });
-
-  // If a room is full, don't add them
-  if (existingRoom.players.length === MAX_PLAYERS) return res.status(409).json({ error: 'Room is full' });
-
   const { playerName } = req.body;
-  if (!playerName) return res.status(400).json({ error: 'playerName not specified' });
 
-  // Player already exists?
-  const existingPlayer = existingRoom.players.find(p => p.playerName === playerName);
-  if (existingPlayer) return res.status(409).json({ error: 'Player already in the room' });
+  const room = rooms.find(p => p.roomName === roomName);
+  if (!room) return res.status(404).json({ error: 'Room not found' });
+  if (room.players.length === MAX_PLAYERS) return res.status(409).json({ error: 'Room is full' });
+  let player = room.players.find(p => p.playerName === playerName);
+  if (player) return res.status(409).json({ error: 'Player already in the room' });
 
-  const newPlayer = createPlayer(playerName);
+  player = createPlayer(playerName);
   console.log(`Player ${playerName} joined ${roomName}`);
 
   // Mark the host, who must stay for the length of the game
-  // The first player will also take the first move
-  if (existingRoom.players.length === 0) {
-    newPlayer.isHost = true;
-    existingRoom.currentPlayer = newPlayer.playerName;
+  if (room.players.length === 0) {
+    player.isHost = true;
+    room.currentPlayer = player.playerName;
   }
 
-  existingRoom.players.push(newPlayer);
-  return res.status(200).json(existingRoom);
+  room.players.push(player);
+  return res.status(200).json(room);
 };
 
 /**
@@ -86,44 +83,14 @@ const handlePutRoomPlayer = (req, res) => {
  */
 const handlePutRoomInGame = (req, res) => {
   const { roomName } = req.params;
-  if (!roomName) return res.status(400).json({ error: 'roomName not specified' });
-  const existingRoom = rooms.find(p => p.roomName === roomName);
-  if (!existingRoom) return res.status(404).json({ error: 'Room not found' });
+  const room = rooms.find(p => p.roomName === roomName);
+  if (!room) return res.status(404).json({ error: 'Room not found' });
 
   // Set the game as in progress, clients poll for this
+  room.inGame = true;
   console.log(`Room ${roomName} is now in game`);
-  existingRoom.inGame = true;
-  return res.status(200).json(existingRoom);
+  return res.status(200).json(room);
 };
-
-/**
- * Find instances where a player has surrounded another player's tiles.
- *
- * @param {Object} existingRoom - Room to search.
- */
-const findSurroundedTiles = (existingRoom) => {
-  const { grid, players } = existingRoom;
-
-  for (let y = 1; y < GRID_SIZE - 2; y++) {
-    for (let x = 1; x < GRID_SIZE - 2; x++) {
-      const centerOwner = grid[y][x].playerName;
-      if (
-        grid[y - 1][x].playerName && grid[y - 1][x].playerName !== centerOwner &&
-        grid[y + 1][x].playerName && grid[y + 1][x].playerName !== centerOwner &&
-        grid[y][x + 1].playerName && grid[y][x + 1].playerName !== centerOwner &&
-        grid[y][x - 1].playerName && grid[y][x - 1].playerName !== centerOwner
-      ) {
-        // Surrounding player takes over
-        const newOwnerName = grid[y - 1][x].playerName;
-        console.log(`Player ${newOwnerName} claimed tile ${x}:${y} from ${centerOwner}`);
-        grid[y][x].playerName = newOwnerName;
-
-        const newOwnerPlayer = players.find(p => p.playerName === newOwnerName);
-        newOwnerPlayer.score += 5 * SCORE_AMOUNT_SINGLE;
-      }
-    }
-  }
-}
 
 /**
  * Handle POST /room/:roomName/square requests.
@@ -133,36 +100,61 @@ const findSurroundedTiles = (existingRoom) => {
  */
 const handlePostRoomSquare = (req, res) => {
   const { roomName } = req.params;
-  if (!roomName) return res.status(400).json({ error: 'roomName not specified' });
-  const existingRoom = rooms.find(p => p.roomName === roomName);
-  if (!existingRoom) return res.status(404).json({ error: 'Room not found' });
-
   const { playerName, row, col } = req.body;
-  if (row === undefined || col === undefined || !playerName) {
-    return res.status(400).json({ error: 'row, col, or playerName not specified' });
-  }
 
-  const existingPlayer = existingRoom.players.find(p => p.playerName === playerName);
-  if (!existingPlayer) return res.status(404).json({ error: 'Player not found' });
+  const room = rooms.find(p => p.roomName === roomName);
+  if (!room) return res.status(404).json({ error: 'Room not found' });
+  const player = room.players.find(p => p.playerName === playerName);
+  if (!player) return res.status(404).json({ error: 'Player not found' });
 
-  // Set ownership - client validates it is free
+  // Set ownership and aware points - client validates it is a free square
   console.log(`Player ${playerName} placed at ${col}:${row}`);
-  existingRoom.grid[row][col].playerName = playerName;
-
-  // Calculate points to award - TODO Magic shapes award more points
-  existingPlayer.score += SCORE_AMOUNT_SINGLE;
+  room.grid[row][col].playerName = playerName;
+  player.score += SCORE_AMOUNT_SINGLE;
 
   // Find tiles surrounded for conversion
-  findSurroundedTiles(existingRoom);
+  findSurroundedSquares(room);
+  // more shapes...
+
+  // Winner?
+  room.allSquaresFilled = room.grid.reduce((acc, row) => {
+    if (acc) return acc;
+
+    return row.every(square => !!square.playerName);
+  }, false);
+  if (room.allSquaresFilled) {
+    room.inGame = false;
+  }
 
   // Next player's turn - has to be done by name in case players drop out
-  let currentPlayerIndex = existingRoom.players.indexOf(existingPlayer);
-  currentPlayerIndex += 1;
-  currentPlayerIndex %= existingRoom.players.length;
-  existingRoom.currentPlayer = existingRoom.players[currentPlayerIndex].playerName;
+  const nextPlayerIndex = (room.players.indexOf(player) + 1) % room.players.length;
+  room.currentPlayer = room.players[nextPlayerIndex].playerName;
 
   // Respond with new roomState
-  return res.status(200).json(existingRoom);
+  return res.status(200).json(room);
+};
+
+/**
+ * Handle POST /room/:roomName/testEndGame requests.
+ *
+ * @param {Object} req - Request object.
+ * @param {Object} res - Response object.
+ */
+const handlePostRoomTestEndgame = (req, res) => {
+  const { roomName } = req.params;
+
+  const room = rooms.find(p => p.roomName === roomName);
+  for (let row = 0; row < GRID_SIZE; row++) {
+    for (let col = 0; col < GRID_SIZE; col++) {
+      room.grid[row][col].playerName = room.players[0].playerName;
+    }
+  }
+
+  // Don't complete right away
+  room.grid[0][0].playerName = null;
+
+  // Respond with new roomState
+  return res.status(200).json(room);
 };
 
 /**
@@ -171,14 +163,23 @@ const handlePostRoomSquare = (req, res) => {
 const monitorPlayerLastSeen = () => {
   setInterval(() => {
     const now = Date.now();
+
     rooms.forEach((room) => {
-      room.players.forEach((player) => {
+      room.players.forEach((player, index) => {
         // Players who didn't query roomState for a while get removed
         const diff = now - player.lastSeen;
         if (diff < PLAYER_LAST_SEEN_MAX_MS) return;
 
         console.log(`Removing player ${player.playerName} from ${room.roomName} after ${diff / 1000}s`);
         room.players.splice(room.players.indexOf(player), 1);
+
+        // If the player taking a turn leaves, move on to the next player
+        if (room.currentPlayer === player.playerName) {
+          const nextPlayerIndex = (index + 1) % room.players.length;
+          const nextPlayer = room.players[nextPlayerIndex];
+          if (!nextPlayer) return;
+          room.currentPlayer = nextPlayer.playerName;
+        }
       });
 
       // If the room now has no players, free it up
@@ -188,14 +189,13 @@ const monitorPlayerLastSeen = () => {
       }
     });
   }, PLAYER_LAST_SEEN_INTERVAL_MS);
-}
+};
 
 module.exports = {
   handleGetRoom,
   handlePutRoomPlayer,
   handlePutRoomInGame,
   handlePostRoomSquare,
+  handlePostRoomTestEndgame,
   monitorPlayerLastSeen,
 };
-
-// FIXME: Expire rooms when they are done with/empty

@@ -18,4 +18,5 @@ export const Pages = {
   Landing: 'landing',
   Lobby: 'lobby',
   InGame: 'ingame',
+  EndGame: 'endgame',
 };

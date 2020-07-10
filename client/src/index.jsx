@@ -9,6 +9,7 @@ import Footer from './components/Footer.jsx';
 import InGamePage from './pages/InGamePage.jsx';
 import LandingPage from './pages/LandingPage.jsx';
 import LobbyPage from './pages/LobbyPage.jsx';
+import EndGamePage from './pages/EndGamePage.jsx';
 import Title from './components/Title.jsx';
 
 if (!window.config) alert('There is no config file');
@@ -19,6 +20,8 @@ if (!window.config) alert('There is no config file');
  * @returns {HTMLElement}
  */
 const Game = () => {
+  const dispatch = useDispatch();
+
   const page = useSelector(state => state.page);
   const roomState =useSelector(state => state.roomState);
 
@@ -32,6 +35,17 @@ const Game = () => {
     }
   }
 
+  // Set server URL from config
+  useEffect(() => {
+    dispatch(setServerUrl(window.config.serverUrl));
+  }, []);
+
+  // Update html, body, #app with same backgroundColor
+  useEffect(() => {
+    document.getElementById('app').style.backgroundColor = backgroundColor;
+    document.body.style.backgroundColor = backgroundColor;
+  }, [backgroundColor]);
+
   return (
     <FlexContainer
       style={{
@@ -44,6 +58,7 @@ const Game = () => {
       {page == Pages.Landing && <LandingPage />}
       {page == Pages.Lobby && <LobbyPage />}
       {page == Pages.InGame && <InGamePage />}
+      {page == Pages.EndGame && <EndGamePage />}
       <Footer />
     </FlexContainer>
   );

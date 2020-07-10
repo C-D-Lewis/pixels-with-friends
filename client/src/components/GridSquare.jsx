@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { SQUARE_SIZE, PlayerColors } from '../constants';
 import { setRoomState } from '../actions';
 import FlexContainer from './FlexContainer.jsx';
+import audioService from '../services/audioService';
 import apiService from '../services/apiService';
 
 /**
@@ -18,9 +19,17 @@ const GridSquare = ({ square }) => {
   const roomState = useSelector(state => state.roomState);
 
   const myTurn = roomState.currentPlayer === playerName;
-  // FIXME: Handle a player leaving (not host)
-  const ownerPlayer = roomState.players.find(p => p.playerName === square.playerName);
-  const ownerIndex = roomState.players.indexOf(ownerPlayer);
+  let backgroundColor = 'white';
+  if (square.playerName) {
+    const ownerPlayer = roomState.players.find(p => p.playerName === square.playerName);
+    if (ownerPlayer) {
+      const ownerIndex = roomState.players.indexOf(ownerPlayer);
+      backgroundColor = PlayerColors[ownerIndex].light;
+    } else {
+      // They left, square is dead
+      backgroundColor = 'black';
+    }
+  }
 
   /**
    * Take a turn.
@@ -33,6 +42,7 @@ const GridSquare = ({ square }) => {
 
     try {
       const newRoomState = await apiService.takeSquare(square);
+      audioService.play('take.mp3');
       dispatch(setRoomState(newRoomState));
     } catch (e) {
       console.log(e);
@@ -47,12 +57,12 @@ const GridSquare = ({ square }) => {
       style={{
         width: SQUARE_SIZE,
         height: SQUARE_SIZE,
-        backgroundColor: square.playerName ? PlayerColors[ownerIndex].light : 'white',
+        backgroundColor,
         margin: 2,
         border: '1px solid black',
         borderRadius: 5,
         transform: `rotateY(${square.playerName ? 180 : 0}deg)`,
-        transition: '0.5s',
+        transition: '0.4s',
       }}>
     </FlexContainer>
   );

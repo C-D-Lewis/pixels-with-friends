@@ -8,6 +8,7 @@ import FlexContainer from '../components/FlexContainer.jsx';
 import Input from '../components/Input.jsx';
 import PlayerList from '../components/PlayerList.jsx';
 import Text from '../components/Text.jsx';
+import audioService from '../services/audioService';
 import apiService from '../services/apiService';
 
 /**
@@ -43,7 +44,10 @@ const LobbyPage = () => {
     }
 
     // Game has begun
-    if (roomState.inGame) dispatch(setPage(Pages.InGame));
+    if (roomState.inGame) {
+      audioService.play('ingame.mp3');
+      dispatch(setPage(Pages.InGame));
+    }
   }, [roomState]);
 
   /**

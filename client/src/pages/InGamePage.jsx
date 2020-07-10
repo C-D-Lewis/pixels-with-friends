@@ -39,6 +39,11 @@ const InGamePage = () => {
       return;
     }
 
+    // Winner?
+    if (roomState.allSquaresFilled) {
+      dispatch(setPage(Pages.EndGame));
+    }
+
     // Did someone win? Did the game end?
   }, [roomState]);
 

@@ -65,7 +65,7 @@ const PlayerList = () => {
       style={{
         alignItems: 'left',
         minWidth: 300,
-        marginTop: 25,
+        marginTop: roomState.inGame ? 25 : 10,
         marginLeft: 35,
       }}>
       {roomState.players.map((p, i) => <PlayerView key={p.playerName} roomState={roomState} index={i} />)}
