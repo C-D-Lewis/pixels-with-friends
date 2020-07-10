@@ -54,6 +54,8 @@ const LobbyPage = () => {
    * Host starts the game.
    */
   const startGame = async () => {
+    if (!isHost) return;
+
     try {
       const updatedRoomState = await apiService.putRoomInGame();
       dispatch(setRoomState(updatedRoomState));

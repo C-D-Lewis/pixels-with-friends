@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { SQUARE_SIZE, PlayerColors } from '../constants';
+import { SQUARE_SIZE, Pages, PlayerColors } from '../constants';
 import FlexContainer from './FlexContainer.jsx';
 import Text from './Text.jsx';
 
@@ -33,6 +33,8 @@ const PlayerView = ({ roomState, index }) => {
   const player = roomState.players[index];
   const isMyTurn = player.playerName === roomState.currentPlayer && roomState.inGame;
 
+  const page = useSelector(state => state.page);
+
   return (
     <FlexContainer style={{ flexDirection: 'row' }}>
       <div
@@ -45,7 +47,7 @@ const PlayerView = ({ roomState, index }) => {
           border: isMyTurn ? '2px solid white' : '2px solid black',
         }}/>
       <Text>{player.playerName}</Text>
-      {roomState.inGame == true && <Text style={{ marginLeft: 20 }}>{player.score} points</Text>}
+      {page !== Pages.Lobby && <Text style={{ marginLeft: 20 }}>{player.score} points</Text>}
       {index === 0 && <HostPill />}
     </FlexContainer>
   );
