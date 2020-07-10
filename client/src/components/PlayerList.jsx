@@ -60,10 +60,14 @@ const PlayerView = ({ roomState, index }) => {
 const PlayerList = () => {
   const roomState = useSelector(state => state.roomState);
 
-  // In game only - support score count and showing whose turn it is
-
   return (
-    <FlexContainer style={{ alignItems: 'left' }}>
+    <FlexContainer
+      style={{
+        alignItems: 'left',
+        minWidth: 300,
+        marginTop: 25,
+        marginLeft: 35,
+      }}>
       {roomState.players.map((p, i) => <PlayerView key={p.playerName} roomState={roomState} index={i} />)}
     </FlexContainer>
   );

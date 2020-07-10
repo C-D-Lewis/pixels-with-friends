@@ -51,7 +51,8 @@ const GridSquare = ({ square }) => {
         margin: 2,
         border: '1px solid black',
         borderRadius: 5,
-        transition: '1s',
+        transform: `rotateY(${square.playerName ? 180 : 0}deg)`,
+        transition: '0.5s',
       }}>
     </FlexContainer>
   );

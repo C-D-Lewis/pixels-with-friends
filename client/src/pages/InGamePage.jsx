@@ -46,8 +46,14 @@ const InGamePage = () => {
     <Fader>
       <FlexContainer>
         <Text>{`You are in "${roomState.roomName}"`}</Text>
-        <GameGrid />
-        <FlexContainer style={{ marginTop: 15 }}>
+        <FlexContainer
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            marginTop: 15,
+          }}>
+          <GameGrid />
           <PlayerList />
         </FlexContainer>
       </FlexContainer>

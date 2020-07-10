@@ -17,6 +17,7 @@ const GameGrid = () => {
       backgroundColor: '#444B',
       padding: 10,
       borderRadius: 10,
+      minWidth: 340,
     }}>
       {grid.map((row) => (
         <FlexContainer key={row[0].key} style={{ flexDirection: 'row' }}>

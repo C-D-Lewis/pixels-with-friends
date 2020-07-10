@@ -1,7 +1,7 @@
 .button:hover {
-  backgroundColor: lightgrey;
+  background-color: #666 !important;
 }
 
 .grid-square:hover {
-  backgroundColor: pink;
+  filter: brightness(0.7);
 }
