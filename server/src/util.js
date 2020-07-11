@@ -96,4 +96,5 @@ module.exports = {
   createRoom,
   createPlayer,
   findSurroundedSquares,
+  SCORE_AMOUNT_SINGLE,
 };
