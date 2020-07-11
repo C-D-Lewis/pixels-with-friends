@@ -59,7 +59,7 @@ const GridSquare = ({ square }) => {
         height: SQUARE_SIZE,
         backgroundColor,
         margin: 2,
-        border: `1px solid ${square.inShape ? 'gold' : 'black'}`,
+        border: `2px solid ${square.inShape ? 'gold' : 'black'}`,
         borderRadius: 5,
         transform: `rotateY(${square.playerName ? 180 : 0}deg)`,
         transition: '0.4s',

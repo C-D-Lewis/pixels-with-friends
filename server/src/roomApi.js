@@ -3,6 +3,7 @@ const { omit } = require('lodash');
 const {
   GRID_SIZE,
   SCORE_AMOUNT_SINGLE,
+  randomInt,
   createRoom,
   createPlayer,
   findSurroundedSquares,
@@ -157,7 +158,7 @@ const handlePostRoomTestEndgame = (req, res) => {
   const room = rooms.find(p => p.roomName === roomName);
   for (let row = 0; row < GRID_SIZE; row++) {
     for (let col = 0; col < GRID_SIZE; col++) {
-      room.grid[row][col].playerName = room.players[0].playerName;
+      room.grid[row][col].playerName = room.players[randomInt(0, room.players.length - 1)].playerName;
     }
   }
 

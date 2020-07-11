@@ -71,6 +71,15 @@ const createRoom = (roomName) => ({
 const isInGrid = (x, y) => x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE;
 
 /**
+ * Get a random integer in a range.
+ *
+ * @param {number} min - Minimum value.
+ * @param {numberr} max - Maximum value to use.
+ * @returns {number} The random integer.
+ */
+const randomInt = (min, max) => Math.round(Math.random() * (max - min)) + min;
+
+/**
  * Find instances where a player has surrounded another player's squares.
  *
  * @param {Object} room - Room to search.
@@ -157,6 +166,7 @@ const findRuns = (room) => {
 module.exports = {
   GRID_SIZE,
   SCORE_AMOUNT_SINGLE,
+  randomInt,
   createRoom,
   createPlayer,
   findSurroundedSquares,

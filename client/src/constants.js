@@ -1,5 +1,5 @@
 /** Size of a grid square */
-export const SQUARE_SIZE = 32;
+export const SQUARE_SIZE = 30;
 
 /** Player colors */
 export const PlayerColors = {
