@@ -4,6 +4,7 @@ import { Pages } from './constants';
 
 /** Initial store for the entire reducer. */
 const INITIAL_STATE = {
+  rooms: [],
   roomName: '',
   roomState: null,
   playerName: '',

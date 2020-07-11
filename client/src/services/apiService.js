@@ -1,12 +1,15 @@
 import store from '../store';
-import { setRoomState } from '../actions';
+import { setRoomState, setRooms } from '../actions';
 
 /** API root */
 const API = 'http://localhost:5500';
 /** Room poll interval */
 const ROOM_POLL_INTERVAL_MS = 1000;
+/** Rooms poll interval */
+const ROOMS_POLL_INTERVAL_MS = 5000;
 
-let pollHandle;
+let pollRoomHandle;
+let pollRoomsHandle;
 
 /**
  * Send a HTTP request.
@@ -40,6 +43,13 @@ const getRoom = async () => {
 
   return await request('GET', `/rooms/${roomName}?playerName=${playerName}`);
 };
+
+/**
+ * Get a list of open rooms.
+ *
+ * @returns {Promise<Object>} Promise resolving to the rooms response.
+ */
+const getRooms = async () => request('GET', '/rooms');
 
 /**
  * Get a room from the service.
@@ -78,10 +88,11 @@ const takeSquare = async (square) => {
 };
 
 /**
- * Poll the room state, and by doing so keep the player alive in the server's eyes.
+ * Poll the room state, and by doing so keep the player alive in the server's eyes,
+ * and updating the game state.
  */
 const pollRoomState = () => {
-  pollHandle = setInterval(async () => {
+  pollRoomHandle = setInterval(async () => {
     const { roomState } = store.getState();
     if (!roomState) return;
 
@@ -91,17 +102,35 @@ const pollRoomState = () => {
 };
 
 /**
- * Stop polling.
+ * Stop polling room state.
  */
-const stopPolling = () => clearInterval(pollHandle);
+const stopPollRoomState = () => clearInterval(pollRoomHandle);
+
+/**
+ * Poll the list of rooms so players can see when theirs is freed or available.
+ */
+const pollRooms = () => {
+  pollRoomsHandle = setInterval(async () => {
+    const { rooms } = await getRooms();
+    store.dispatch(setRooms(rooms));
+  }, ROOMS_POLL_INTERVAL_MS);
+};
+
+/**
+ * Stop polling rooms state.
+ */
+const stopPollRooms = () => clearInterval(pollRoomsHandle);
 
 const apiService = {
+  getRooms,
   getRoom,
   putPlayerInRoom,
   putRoomInGame,
   takeSquare,
   pollRoomState,
-  stopPolling,
+  stopPollRoomState,
+  pollRooms,
+  stopPollRooms,
 };
 
 export default apiService;

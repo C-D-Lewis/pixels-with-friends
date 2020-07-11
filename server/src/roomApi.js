@@ -1,10 +1,12 @@
+const { omit } = require('lodash');
+
 const {
   GRID_SIZE,
   SCORE_AMOUNT_SINGLE,
   createRoom,
   createPlayer,
   findSurroundedSquares,
-} = require('../util');
+} = require('./util');
 
 /** Max players */
 const MAX_PLAYERS = 8;
@@ -17,6 +19,14 @@ const PLAYER_LAST_SEEN_MAX_MS = 10000;
 const rooms = [];
 
 /**
+ * Handle GET /rooms requests. A summary is returned
+ *
+ * @param {Object} req - Request object.
+ * @param {Object} res - Response object.
+ */
+const handleGetRooms = (req, res) => res.status(200).json({ rooms: rooms.map(p => omit(p, 'grid'))});
+
+/**
  * Handle GET /room/:roomName requests.
  *
  * @param {Object} req - Request object.
@@ -24,6 +34,7 @@ const rooms = [];
  */
 const handleGetRoom = (req, res) => {
   const { roomName } = req.params;
+  const { playerName } = req.query;
   if (!roomName) return res.status(400).json({ error: 'roomName not specified' });
 
   // If room doesn't exist, create it
@@ -35,7 +46,6 @@ const handleGetRoom = (req, res) => {
   }
 
   // If a player requested, update the player's lastSeen
-  const { playerName } = req.query;
   if (playerName) {
     const player = room.players.find(p => p.playerName === playerName);
     if (player) {
@@ -175,9 +185,9 @@ const monitorPlayerLastSeen = () => {
 
         // If the player taking a turn leaves, move on to the next player
         if (room.currentPlayer === player.playerName) {
-          const nextPlayerIndex = (index + 1) % room.players.length;
-          const nextPlayer = room.players[nextPlayerIndex];
+          const nextPlayer = room.players[(index + 1) % room.players.length];
           if (!nextPlayer) return;
+
           room.currentPlayer = nextPlayer.playerName;
         }
       });
@@ -192,6 +202,7 @@ const monitorPlayerLastSeen = () => {
 };
 
 module.exports = {
+  handleGetRooms,
   handleGetRoom,
   handlePutRoomPlayer,
   handlePutRoomInGame,

@@ -48,4 +48,7 @@ export const rootReducer = combineReducers({
   serverUrl: buildReducer('', {
     SET_SERVER_URL: (state, { serverUrl }) => serverUrl,
   }),
+  rooms: buildReducer([], {
+    SET_ROOMS: (state, { rooms }) => rooms,
+  }),
 });

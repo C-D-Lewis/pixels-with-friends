@@ -29,7 +29,7 @@ const LobbyPage = () => {
   // Check room state while waiting.
   useEffect(() => {
     apiService.pollRoomState();
-    return () => apiService.stopPolling();
+    return () => apiService.stopPollRoomState();
   }, []);
 
   // When room state updates, game could have begun

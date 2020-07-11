@@ -25,7 +25,7 @@ const InGamePage = () => {
   // Check room state while waiting.
   useEffect(() => {
     apiService.pollRoomState();
-    return () => apiService.stopPolling();
+    return () => apiService.stopPollRoomState();
   }, []);
 
   // When room state updates, game state changed
@@ -50,7 +50,7 @@ const InGamePage = () => {
   return (
     <Fader>
       <FlexContainer>
-        <Text>{`You are in "${roomState.roomName}"`}</Text>
+        <Text>{`It's ${roomState.currentPlayer}'s turn!`}</Text>
         <FlexContainer
           style={{
             flexDirection: 'row',

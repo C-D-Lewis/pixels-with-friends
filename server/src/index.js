@@ -2,13 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { enablePreflight, printRequest } = require('./middleware');
 const {
+  handleGetRooms,
   handleGetRoom,
   handlePutRoomPlayer,
   handlePutRoomInGame,
   handlePostRoomSquare,
   handlePostRoomTestEndgame,
   monitorPlayerLastSeen,
-} = require('./api/roomApi');
+} = require('./roomApi');
 
 /** Port to use */
 const PORT = process.env.PORT || 5500;
@@ -22,6 +23,7 @@ const main = () => {
   app.use(enablePreflight);
   // app.use(printRequest);
 
+  app.get('/rooms', handleGetRooms);
   app.get('/rooms/:roomName', handleGetRoom);
   app.put('/rooms/:roomName/player', handlePutRoomPlayer);
   app.put('/rooms/:roomName/inGame', handlePutRoomInGame);

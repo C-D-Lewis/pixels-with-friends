@@ -52,3 +52,14 @@ export const setServerUrl = serverUrl => ({
   type: 'SET_SERVER_URL',
   serverUrl,
 });
+
+/**
+ * rooms reducer.
+ *
+ * @param {string} rooms - Current rooms state.
+ * @returns {Object} Action object.
+ */
+export const setRooms = rooms => ({
+  type: 'SET_ROOMS',
+  rooms,
+});
