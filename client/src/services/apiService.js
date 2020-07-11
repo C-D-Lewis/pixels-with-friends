@@ -6,7 +6,7 @@ const API = 'http://localhost:5500';
 /** Room poll interval */
 const ROOM_POLL_INTERVAL_MS = 1000;
 /** Rooms poll interval */
-const ROOMS_POLL_INTERVAL_MS = 5000;
+const ROOMS_POLL_INTERVAL_MS = 2000;
 
 let pollRoomHandle;
 let pollRoomsHandle;
@@ -29,7 +29,7 @@ const request = async (method, path, json) => {
   });
 
   if (res.status > 400) throw new Error(`Error: ${await res.text()}`)
-  return await res.json();
+  return res.json();
 };
 
 /**
@@ -41,7 +41,7 @@ const getRoom = async () => {
   const { roomName, playerName } = store.getState();
   if (!roomName && !playerName) return;
 
-  return await request('GET', `/rooms/${roomName}?playerName=${playerName}`);
+  return request('GET', `/rooms/${roomName}?playerName=${playerName}`);
 };
 
 /**
@@ -59,7 +59,7 @@ const getRooms = async () => request('GET', '/rooms');
 const putPlayerInRoom = async () => {
   const { roomName, playerName } = store.getState();
 
-  return await request('PUT', `/rooms/${roomName}/player`, { playerName });
+  return request('PUT', `/rooms/${roomName}/player`, { playerName });
 };
 
 /**
@@ -70,7 +70,7 @@ const putPlayerInRoom = async () => {
 const putRoomInGame = async () => {
   const { roomName } = store.getState();
 
-  return await request('PUT', `/rooms/${roomName}/inGame`);
+  return request('PUT', `/rooms/${roomName}/inGame`);
 };
 
 /**
@@ -84,7 +84,7 @@ const takeSquare = async (square) => {
   const [row, col] = square.key.split(':').map(p => parseInt(p));
 
   const payload = { playerName, row, col };
-  return await request('POST', `/rooms/${roomName}/square`, payload);
+  return request('POST', `/rooms/${roomName}/square`, payload);
 };
 
 /**

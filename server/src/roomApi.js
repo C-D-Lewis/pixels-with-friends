@@ -6,6 +6,7 @@ const {
   createRoom,
   createPlayer,
   findSurroundedSquares,
+  findRuns,
 } = require('./util');
 
 /** Max players */
@@ -124,7 +125,7 @@ const handlePostRoomSquare = (req, res) => {
 
   // Find tiles surrounded for conversion
   findSurroundedSquares(room);
-  // more shapes...
+  findRuns(room);
 
   // Winner?
   room.allSquaresFilled = room.grid.reduce((acc, row) => {
