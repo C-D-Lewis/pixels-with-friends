@@ -24,12 +24,8 @@ export const rootReducer = combineReducers({
       if (!roomState) return roomState;
 
       // Player left?
-      if (state.players.length > roomState.players.length) {
-        audioService.play('leave.mp3');
-      }
-      if (state.players.length < roomState.players.length) {
-        audioService.play('join.mp3');
-      }
+      if (state.players.length > roomState.players.length) audioService.play('leave.mp3');
+      if (state.players.length < roomState.players.length) audioService.play('join.mp3');
 
       // Square taken?
       if (JSON.stringify(state.grid) !== JSON.stringify(roomState.grid)) {

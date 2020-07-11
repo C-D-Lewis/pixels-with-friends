@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setPage, setRoomState } from '../actions';
+import { useDispatch } from 'react-redux';
+import { setPage } from '../actions';
 import { Pages } from '../constants';
 import Button from '../components/Button.jsx';
 import Fader from '../components/Fader.jsx';
@@ -14,7 +14,6 @@ import audioService from '../services/audioService';
  * EndGamePage component.
  *
  * Shows the grid, player list and their scores.
- *
  * It is... inevitable.
  *
  * @returns {HTMLElement}
@@ -22,9 +21,8 @@ import audioService from '../services/audioService';
 const EndGamePage = () => {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    audioService.play('applause.mp3');
-  }, []);
+  // Play applause when shown
+  useEffect(() => audioService.play('applause.mp3'), []);
 
   return (
     <Fader>

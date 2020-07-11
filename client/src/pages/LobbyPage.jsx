@@ -5,7 +5,6 @@ import { Pages } from '../constants';
 import Button from '../components/Button.jsx';
 import Fader from '../components/Fader.jsx';
 import FlexContainer from '../components/FlexContainer.jsx';
-import Input from '../components/Input.jsx';
 import PlayerList from '../components/PlayerList.jsx';
 import Text from '../components/Text.jsx';
 import audioService from '../services/audioService';
@@ -23,8 +22,7 @@ const LobbyPage = () => {
   const playerName = useSelector(state => state.playerName);
 
   const isHost = !!roomState.players.find(p => p.playerName === playerName && p.isHost);
-  const gameCanStart = roomState.players.length > 1;
-  const hostCanStartGame = isHost && gameCanStart;
+  const hostCanStartGame = isHost && roomState.players.length > 1;
 
   // Check room state while waiting.
   useEffect(() => {
@@ -57,16 +55,16 @@ const LobbyPage = () => {
     if (!isHost) return;
 
     try {
-      const updatedRoomState = await apiService.putRoomInGame();
-      dispatch(setRoomState(updatedRoomState));
-
       // Go to game!
+      dispatch(setRoomState(await apiService.putRoomInGame()));
       dispatch(setPage(Pages.InGame));
     } catch (e) {
       console.log(e);
       alert(e);
     }
   };
+
+  // TODO: Team colors
 
   return (
     <Fader>

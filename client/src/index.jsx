@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 import ReactDOM from 'react-dom';
 import { Pages, PlayerColors } from './constants';
-import { setServerUrl, setRoomName } from './actions';
+import { setServerUrl } from './actions';
 import store from './store';
 import FlexContainer from './components/FlexContainer.jsx';
 import Footer from './components/Footer.jsx';
+import Title from './components/Title.jsx';
+import EndGamePage from './pages/EndGamePage.jsx';
 import InGamePage from './pages/InGamePage.jsx';
 import LandingPage from './pages/LandingPage.jsx';
 import LobbyPage from './pages/LobbyPage.jsx';
-import EndGamePage from './pages/EndGamePage.jsx';
-import Title from './components/Title.jsx';
 
 if (!window.config) alert('There is no config file');
 
@@ -28,10 +28,8 @@ const Game = () => {
   let backgroundColor = '#393939';
   if (roomState && page === Pages.InGame) {
     const currentPlayer = roomState.players.find(p => p.playerName === roomState.currentPlayer);
-    // They could have left
     if (currentPlayer) {
-      const currentPlayerIndex = roomState.players.indexOf(currentPlayer);
-      backgroundColor = PlayerColors[currentPlayerIndex].dark;
+      backgroundColor = PlayerColors[roomState.players.indexOf(currentPlayer)].dark;
     }
   }
 
@@ -40,7 +38,7 @@ const Game = () => {
     dispatch(setServerUrl(window.config.serverUrl));
   }, []);
 
-  // Update html, body, #app with same backgroundColor
+  // Update html, body, #app with same backgroundColor to avoid bottom gap
   useEffect(() => {
     document.getElementById('app').style.backgroundColor = backgroundColor;
     document.body.style.backgroundColor = backgroundColor;

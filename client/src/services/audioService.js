@@ -12,14 +12,10 @@ const play = (fileName) => {
     return;
   }
 
-  const url = `assets/audio/${fileName}`;
-  const audio = new Audio(url);
-  cache[fileName] = audio;
-  audio.play();
+  cache[fileName] = new Audio(`assets/audio/${fileName}`);
+  cache[fileName].play();
 };
 
-const audioService = {
-  play,
-};
+const audioService = { play };
 
 export default audioService;

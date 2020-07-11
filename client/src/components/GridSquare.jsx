@@ -23,8 +23,7 @@ const GridSquare = ({ square }) => {
   if (square.playerName) {
     const ownerPlayer = roomState.players.find(p => p.playerName === square.playerName);
     if (ownerPlayer) {
-      const ownerIndex = roomState.players.indexOf(ownerPlayer);
-      backgroundColor = PlayerColors[ownerIndex].light;
+      backgroundColor = PlayerColors[roomState.players.indexOf(ownerPlayer)].light;
     } else {
       // They left, square is dead
       backgroundColor = 'black';
@@ -35,10 +34,8 @@ const GridSquare = ({ square }) => {
    * Take a turn.
    */
   const takeTurn = async () => {
-    // Not my turn
-    if (!myTurn) return;
-    // Square already taken
-    if (square.playerName) return;
+    // Not my turn / Square already taken
+    if (!myTurn || square.playerName) return;
 
     try {
       const newRoomState = await apiService.takeSquare(square);

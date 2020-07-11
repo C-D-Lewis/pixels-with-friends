@@ -1,8 +1,6 @@
 import store from '../store';
 import { setRoomState, setRooms } from '../actions';
 
-/** API root */
-const API = 'http://localhost:5500';
 /** Room poll interval */
 const ROOM_POLL_INTERVAL_MS = 1000;
 /** Rooms poll interval */
@@ -20,9 +18,7 @@ let pollRoomsHandle;
  */
 const request = async (method, path, json) => {
   const { serverUrl } = store.getState();
-
-  const apiUrl = `http://${serverUrl}:5500`;
-  const res = await fetch(`${apiUrl}${path}`, {
+  const res = await fetch(`http://${serverUrl}:5500${path}`, {
     method,
     headers: { 'Content-Type': 'application/json' },
     ...{ body: json ? JSON.stringify(json): null },

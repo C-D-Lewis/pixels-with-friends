@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setPage, setRoomState } from '../actions';
+import { setPage } from '../actions';
 import { Pages } from '../constants';
 import Fader from '../components/Fader.jsx';
 import FlexContainer from '../components/FlexContainer.jsx';
@@ -11,7 +11,6 @@ import apiService from '../services/apiService';
 
 /**
  * InGamePage component.
- *
  * Shows the grid, player list and their scores.
  *
  * @returns {HTMLElement}
@@ -40,12 +39,11 @@ const InGamePage = () => {
     }
 
     // Winner?
-    if (roomState.allSquaresFilled) {
-      dispatch(setPage(Pages.EndGame));
-    }
-
-    // Did someone win? Did the game end?
+    if (roomState.allSquaresFilled) dispatch(setPage(Pages.EndGame));
   }, [roomState]);
+
+  // TODO: Time remaining
+  // TODO: Tips on shapes
 
   return (
     <Fader>

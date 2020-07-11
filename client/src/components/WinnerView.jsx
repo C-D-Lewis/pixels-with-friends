@@ -14,11 +14,16 @@ const WinnerView = () => {
   const roomState = useSelector(state => state.roomState);
 
   const topScore = roomState.players.reduce((acc, p) => p.score < acc ? acc : p.score, 0);
-  const winner = roomState.players.find(p => p.score === topScore);
+  const { playerName } = roomState.players.find(p => p.score === topScore);
 
   return (
-    <FlexContainer>
-      <Text style={{ fontSize: '1.8rem' }}>{winner.playerName}</Text>
+    <FlexContainer
+      style={{
+        padding: '0px 12px',
+        backgroundColor: 'gold',
+        borderRadius: 15,
+      }}>
+      <Text style={{ fontSize: '1.8rem' }}>{playerName}</Text>
     </FlexContainer>
   );
 };

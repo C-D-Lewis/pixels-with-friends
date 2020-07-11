@@ -23,11 +23,7 @@ import apiService from '../services/apiService';
  * @param {string} name - Room or player name proposed.
  * @returns {boolean} true if the name is valid.
  */
-const nameIsValid = name => (
-  name &&
-  name.length > 1 &&
-  !name.includes(' ')
-);
+const nameIsValid = name => name && name.length > 1 && !name.includes(' ');
 
 /**
  * Get a query param.
@@ -44,9 +40,7 @@ const getQueryParam = name => new URLSearchParams(window.location.search).get(na
  * @returns {HTMLElement}
  */
 const RoomListItem = ({ room }) => (
-  <Text style={{ margin: '10px 0px' }}>
-    {`${room.roomName} - ${room.players.length} players`}
-  </Text>
+  <Text style={{ margin: '10px 0px' }}>{`${room.roomName} - ${room.players.length} players`}</Text>
 );
 
 /**
@@ -74,12 +68,10 @@ const LandingPage = () => {
       // Ensure the room exists
       await apiService.getRoom();
 
-      // Add the player
+      // Add the player to the lobby
       const newRoomState = await apiService.putPlayerInRoom();
       audioService.play('join.mp3');
       dispatch(setRoomState(newRoomState));
-
-      // Go to lobby
       dispatch(setPage(Pages.Lobby));
     } catch (e) {
       console.log(e);
@@ -90,9 +82,7 @@ const LandingPage = () => {
   // When the component is mounted
   useEffect(() => {
     dispatch(setServerUrl(window.config.serverUrl));
-
-    const roomNameParam = getQueryParam('roomName');
-    if (roomNameParam) dispatch(setRoomName(roomNameParam));
+    dispatch(setRoomName(getQueryParam('roomName') || ''));
 
     apiService.getRooms()
       .then(({ rooms: initialRooms }) => dispatch(setRooms(initialRooms)));
