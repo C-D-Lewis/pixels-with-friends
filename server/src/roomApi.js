@@ -129,9 +129,7 @@ const handlePostRoomSquare = (req, res) => {
   findRuns(room);
 
   // Winner?
-  room.allSquaresFilled = room.grid.reduce((acc, row) => {
-    if (acc) return acc;
-
+  room.allSquaresFilled = room.grid.every((row) => {
     return row.every(square => !!square.playerName);
   }, false);
   if (room.allSquaresFilled) {
@@ -163,7 +161,7 @@ const handlePostRoomTestEndgame = (req, res) => {
   }
 
   // Don't complete right away
-  room.grid[0][0].playerName = null;
+  room.grid[1][0].playerName = null;
 
   // Respond with new roomState
   return res.status(200).json(room);
