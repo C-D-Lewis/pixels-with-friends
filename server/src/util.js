@@ -57,6 +57,10 @@ const createPlayer = (playerName, index) => ({
   score: 0,
   lastSeen: Date.now(),
   color: PlayerColors[index].name,
+  index,
+  conversions: 0,
+  runs: 0,
+  bestRunLength: 0,
 });
 
 /**
@@ -119,6 +123,7 @@ const findSurroundedSquares = (room) => {
       grid[y][x].playerName = nOwner;
       const nOwnerPlayer = players.find(p => p.playerName === nOwner);
       nOwnerPlayer.score += 5 * SCORE_AMOUNT_SINGLE;
+      nOwnerPlayer.conversions++;
     }
   }
 };
@@ -145,10 +150,16 @@ const findRun = (grid, players, owner, y, x, dy, dx) => {
     i += dx;
   }
 
+  const runLength = runLocations.length;
+  if (runLength < RUN_COUNT_MIN) return;
+
   // Award points
-  if (runLocations.length < RUN_COUNT_MIN) return;
   const ownerPlayer = players.find(p => p.playerName === owner);
-  ownerPlayer.score += runLocations.length * SCORE_AMOUNT_SINGLE;
+  ownerPlayer.score += runLength * SCORE_AMOUNT_SINGLE;
+  ownerPlayer.runs++;
+  if (runLength > ownerPlayer.bestRunLength) {
+    ownerPlayer.bestRunLength = runLength;
+  }
   runLocations.forEach(([a, b]) => {
     grid[a][b].inShape = true;
   });

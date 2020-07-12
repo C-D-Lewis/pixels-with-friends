@@ -12,6 +12,12 @@ import PlayerView from './PlayerView.jsx';
 const PlayerList = () => {
   const roomState = useSelector(state => state.roomState);
 
+  const sortedPlayers = roomState.players.sort((a, b) => {
+    if (a.score === b.score) return a.index < b.index ? -1 : 1;
+
+    return a.score > b.score ? -1 : 1;
+  });
+
   return (
     <FlexContainer
       style={{
@@ -20,7 +26,12 @@ const PlayerList = () => {
         marginTop: roomState.inGame ? 25 : 10,
         marginLeft: 35,
       }}>
-      {roomState.players.map((p, i) => <PlayerView key={p.playerName} roomState={roomState} index={i} />)}
+      {sortedPlayers.map((p, i) => (
+        <PlayerView
+          key={p.playerName}
+          player={p}
+          sortIndex={i} />
+      ))}
     </FlexContainer>
   );
 };

@@ -24,6 +24,9 @@ const EndGamePage = () => {
   // Play applause when shown
   useEffect(() => audioService.play('applause.mp3'), []);
 
+  // TODO - Overall team winner
+  // TOOD - stats - most points, conversions, most runs, best run length
+
   return (
     <Fader>
       <FlexContainer style={{ marginBottom: 15 }}>
