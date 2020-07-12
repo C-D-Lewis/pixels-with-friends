@@ -24,7 +24,7 @@ const GridSquare = ({ square }) => {
   if (square.playerName) {
     const ownerPlayer = roomState.players.find(p => p.playerName === square.playerName);
     if (ownerPlayer) {
-      backgroundColor = PlayerColors[roomState.players.indexOf(ownerPlayer)].light;
+      backgroundColor = PlayerColors.find(p => p.name === ownerPlayer.color).light;
     } else {
       // They left, square is dead
       backgroundColor = 'black';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { SQUARE_SIZE, PlayerColors } from '../constants';
+import { SQUARE_SIZE } from '../constants';
 import FlexContainer from './FlexContainer.jsx';
 import Text from './Text.jsx';
 

@@ -66,6 +66,8 @@ const LobbyPage = () => {
 
   // TODO: Team colors
 
+  // TODO: How to Play
+
   return (
     <Fader>
       <FlexContainer>

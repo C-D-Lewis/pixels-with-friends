@@ -23,7 +23,7 @@ const PlayerView = ({ roomState, index }) => {
         style={{
           width: SQUARE_SIZE,
           height: SQUARE_SIZE,
-          backgroundColor: PlayerColors[index].light,
+          backgroundColor: PlayerColors.find(p => p.name === player.color).light,
           borderRadius: 5,
           marginRight: 10,
           border: isMyTurn ? '2px solid white' : '2px solid black',

@@ -43,9 +43,6 @@ const InGamePage = () => {
     if (roomState.allSquaresFilled) dispatch(setPage(Pages.EndGame));
   }, [roomState]);
 
-  // TODO: Time remaining
-  // TODO: Tips on shapes
-
   return (
     <Fader>
       <FlexContainer>

@@ -1,9 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { SQUARE_SIZE, Pages, PlayerColors } from '../constants';
 import FlexContainer from './FlexContainer.jsx';
 import PlayerView from './PlayerView.jsx';
-import Text from './Text.jsx';
 
 /**
  * PlayerList component.

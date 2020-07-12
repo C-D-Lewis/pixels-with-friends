@@ -29,7 +29,7 @@ const Game = () => {
   if (roomState && page === Pages.InGame) {
     const currentPlayer = roomState.players.find(p => p.playerName === roomState.currentPlayer);
     if (currentPlayer) {
-      backgroundColor = PlayerColors[roomState.players.indexOf(currentPlayer)].dark;
+      backgroundColor = PlayerColors.find(p => p.name === currentPlayer.color).dark;
     }
   }
 

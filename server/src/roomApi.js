@@ -74,11 +74,12 @@ const handlePutRoomPlayer = (req, res) => {
   let player = room.players.find(p => p.playerName === playerName);
   if (player) return res.status(409).json({ error: 'Player already in the room' });
 
-  player = createPlayer(playerName);
+  const nextIndex = room.players.length;
+  player = createPlayer(playerName, nextIndex);
   console.log(`Player ${playerName} joined ${roomName}`);
 
   // Mark the host, who must stay for the length of the game
-  if (room.players.length === 0) {
+  if (nextIndex === 0) {
     player.isHost = true;
     room.currentPlayer = player.playerName;
   }
