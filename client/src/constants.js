@@ -20,3 +20,6 @@ export const Pages = {
   InGame: 'ingame',
   EndGame: 'endgame',
 };
+
+/** Turn time */
+export const TURN_TIME_MS = 15000;

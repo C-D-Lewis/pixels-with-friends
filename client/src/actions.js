@@ -63,3 +63,14 @@ export const setRooms = rooms => ({
   type: 'SET_ROOMS',
   rooms,
 });
+
+/**
+ * timeRemaining reducer.
+ *
+ * @param {string} timeRemaining - Current timeRemaining state.
+ * @returns {Object} Action object.
+ */
+export const setTimeRemaining = timeRemaining => ({
+  type: 'SET_TIME_REMAINING',
+  timeRemaining,
+});

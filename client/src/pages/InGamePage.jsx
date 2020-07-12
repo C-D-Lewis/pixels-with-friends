@@ -7,6 +7,7 @@ import FlexContainer from '../components/FlexContainer.jsx';
 import GameGrid from '../components/GameGrid.jsx';
 import PlayerList from '../components/PlayerList.jsx';
 import Text from '../components/Text.jsx';
+import TimeRemaining from '../components/TimeRemaining.jsx';
 import apiService from '../services/apiService';
 
 /**
@@ -49,6 +50,7 @@ const InGamePage = () => {
     <Fader>
       <FlexContainer>
         <Text>{`It's ${roomState.currentPlayer}'s turn!`}</Text>
+        <TimeRemaining />
         <FlexContainer
           style={{
             flexDirection: 'row',

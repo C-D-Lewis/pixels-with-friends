@@ -120,16 +120,17 @@ const handlePostRoomSquare = (req, res) => {
   if (!player) return res.status(404).json({ error: 'Player not found' });
 
   // Set ownership and aware points - client validates it is a free square
-  console.log(`Player ${playerName} placed at ${col}:${row}`);
-  room.grid[row][col].playerName = playerName;
+  const { grid, players } = room;
+  grid[row][col].playerName = playerName;
   player.score += SCORE_AMOUNT_SINGLE;
+  console.log(`Player ${playerName} placed at ${col}:${row}`);
 
   // Find tiles surrounded for conversion
   findSurroundedSquares(room);
   findRuns(room);
 
   // Winner?
-  room.allSquaresFilled = room.grid.every((row) => {
+  room.allSquaresFilled = grid.every((row) => {
     return row.every(square => !!square.playerName);
   }, false);
   if (room.allSquaresFilled) {
@@ -137,8 +138,8 @@ const handlePostRoomSquare = (req, res) => {
   }
 
   // Next player's turn - has to be done by name in case players drop out
-  const nextPlayerIndex = (room.players.indexOf(player) + 1) % room.players.length;
-  room.currentPlayer = room.players[nextPlayerIndex].playerName;
+  const nextIndex = (players.indexOf(player) + 1) % players.length;
+  room.currentPlayer = players[nextIndex].playerName;
 
   // Respond with new roomState
   return res.status(200).json(room);
@@ -162,6 +163,27 @@ const handlePostRoomTestEndgame = (req, res) => {
 
   // Don't complete right away
   room.grid[1][0].playerName = null;
+
+  // Respond with new roomState
+  return res.status(200).json(room);
+};
+
+/**
+ * Handle POST /room/:roomName/nextTurn requests.
+ *
+ * @param {Object} req - Request object.
+ * @param {Object} res - Response object.
+ */
+const handlePostRoomNextTurn = (req, res) => {
+  const { roomName } = req.params;
+
+  const room = rooms.find(p => p.roomName === roomName);
+  if (!room) return res.status(404).json({ error: 'Room not found' });
+
+  const { players } = room;
+  const currentPlayer = players.find(p => p.playerName === room.currentPlayer);
+  const nextIndex = (players.indexOf(currentPlayer) + 1) % players.length;
+  room.currentPlayer = players[nextIndex].playerName;
 
   // Respond with new roomState
   return res.status(200).json(room);
@@ -208,5 +230,6 @@ module.exports = {
   handlePutRoomInGame,
   handlePostRoomSquare,
   handlePostRoomTestEndgame,
+  handlePostRoomNextTurn,
   monitorPlayerLastSeen,
 };

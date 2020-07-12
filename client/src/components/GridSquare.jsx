@@ -17,6 +17,7 @@ const GridSquare = ({ square }) => {
 
   const playerName = useSelector(state => state.playerName);
   const roomState = useSelector(state => state.roomState);
+  const timeRemaining = useSelector(state => state.timeRemaining);
 
   const myTurn = roomState.currentPlayer === playerName;
   let backgroundColor = 'white';
@@ -34,8 +35,8 @@ const GridSquare = ({ square }) => {
    * Take a turn.
    */
   const takeTurn = async () => {
-    // Not my turn / Square already taken
-    if (!myTurn || square.playerName) return;
+    // Not my turn / Square already taken / End of turn
+    if (!myTurn || square.playerName || timeRemaining < 100) return;
 
     try {
       const newRoomState = await apiService.takeSquare(square);

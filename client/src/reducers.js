@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { Pages } from './constants';
+import { TURN_TIME_MS, Pages } from './constants';
 import audioService from './services/audioService';
 
 /**
@@ -46,5 +46,8 @@ export const rootReducer = combineReducers({
   }),
   rooms: buildReducer([], {
     SET_ROOMS: (state, { rooms }) => rooms,
+  }),
+  timeRemaining: buildReducer(TURN_TIME_MS, {
+    SET_TIME_REMAINING: (state, { timeRemaining }) => timeRemaining,
   }),
 });

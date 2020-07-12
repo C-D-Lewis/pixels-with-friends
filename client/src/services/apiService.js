@@ -84,6 +84,17 @@ const takeSquare = async (square) => {
 };
 
 /**
+ * Go to the next player's turn.
+ *
+ * @returns {Promise<Object>} Promise resolving to the room response.
+ */
+const nextTurn = async () => {
+  const { roomName } = store.getState();
+
+  return request('POST', `/rooms/${roomName}/nextTurn`);
+};
+
+/**
  * Poll the room state, and by doing so keep the player alive in the server's eyes,
  * and updating the game state.
  */
@@ -123,6 +134,7 @@ const apiService = {
   putPlayerInRoom,
   putRoomInGame,
   takeSquare,
+  nextTurn,
   pollRoomState,
   stopPollRoomState,
   pollRooms,
