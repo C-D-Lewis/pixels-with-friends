@@ -95,6 +95,17 @@ const nextTurn = async () => {
 };
 
 /**
+ * Set the player's color to the next one.
+ *
+ * @returns {Promise<Object>} Promise resolving to the room response.
+ */
+const nextPlayerColor = async () => {
+  const { roomName, playerName } = store.getState();
+
+  return request('PUT', `/rooms/${roomName}/players/${playerName}/nextColor`);
+};
+
+/**
  * Poll the room state, and by doing so keep the player alive in the server's eyes,
  * and updating the game state.
  */
@@ -135,6 +146,7 @@ const apiService = {
   putRoomInGame,
   takeSquare,
   nextTurn,
+  nextPlayerColor,
   pollRoomState,
   stopPollRoomState,
   pollRooms,

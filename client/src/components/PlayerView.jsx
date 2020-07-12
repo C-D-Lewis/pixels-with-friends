@@ -4,6 +4,8 @@ import { SQUARE_SIZE, Pages, PlayerColors } from '../constants';
 import FlexContainer from './FlexContainer.jsx';
 import HostPill from './HostPill.jsx';
 import Text from './Text.jsx';
+import apiService from '../services/apiService';
+import audioService from '../services/audioService';
 
 /**
  * PlayerView component.
@@ -12,14 +14,21 @@ import Text from './Text.jsx';
  * @returns {HTMLElement}
  */
 const PlayerView = ({ roomState, index }) => {
+  const page = useSelector(state => state.page);
+  const playerName = useSelector(state => state.playerName);
+
   const player = roomState.players[index];
   const isMyTurn = player.playerName === roomState.currentPlayer && roomState.inGame;
-
-  const page = useSelector(state => state.page);
 
   return (
     <FlexContainer style={{ flexDirection: 'row' }}>
       <div
+        onClick={async () => {
+          if (page !== Pages.Lobby || playerName !== player.playerName) return;
+
+          await apiService.nextPlayerColor();
+          audioService.play('take.mp3');
+        }}
         style={{
           width: SQUARE_SIZE,
           height: SQUARE_SIZE,

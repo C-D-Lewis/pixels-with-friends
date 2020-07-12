@@ -9,6 +9,7 @@ const {
   handlePostRoomSquare,
   handlePostRoomTestEndgame,
   handlePostRoomNextTurn,
+  handlePutRoomPlayerNextColor,
   monitorPlayerLastSeen,
 } = require('./roomApi');
 
@@ -27,6 +28,7 @@ const main = () => {
   app.get('/rooms', handleGetRooms);
   app.get('/rooms/:roomName', handleGetRoom);
   app.put('/rooms/:roomName/player', handlePutRoomPlayer);
+  app.put('/rooms/:roomName/players/:playerName/nextColor', handlePutRoomPlayerNextColor);
   app.put('/rooms/:roomName/inGame', handlePutRoomInGame);
   app.post('/rooms/:roomName/square', handlePostRoomSquare);
   app.post('/rooms/:roomName/testEndGame', handlePostRoomTestEndgame);

@@ -179,6 +179,7 @@ const findRuns = (room) => {
 module.exports = {
   GRID_SIZE,
   SCORE_AMOUNT_SINGLE,
+  PlayerColors,
   randomInt,
   createRoom,
   createPlayer,

@@ -3,6 +3,7 @@ const { omit } = require('lodash');
 const {
   GRID_SIZE,
   SCORE_AMOUNT_SINGLE,
+  PlayerColors,
   randomInt,
   createRoom,
   createPlayer,
@@ -191,6 +192,28 @@ const handlePostRoomNextTurn = (req, res) => {
 };
 
 /**
+ * Handle POST /room/:roomName/players/:playerName/nextColor requests.
+ *
+ * @param {Object} req - Request object.
+ * @param {Object} res - Response object.
+ */
+const handlePutRoomPlayerNextColor = (req, res) => {
+  const { roomName, playerName } = req.params;
+
+  const room = rooms.find(p => p.roomName === roomName);
+  if (!room) return res.status(404).json({ error: 'Room not found' });
+  const player = room.players.find(p => p.playerName === playerName);
+  if (!player) return res.status(404).json({ error: 'Player not found' });
+
+  const currentColor = PlayerColors.find(p => p.name === player.color);
+  const nextIndex = (PlayerColors.indexOf(currentColor) + 1) % PlayerColors.length;
+  player.color = PlayerColors[nextIndex].name;
+
+  // Respond with new roomState
+  return res.status(200).json(room);
+};
+
+/**
  * Monitor players for their pings and remove those not seen for a while.
  */
 const monitorPlayerLastSeen = () => {
@@ -232,5 +255,6 @@ module.exports = {
   handlePostRoomSquare,
   handlePostRoomTestEndgame,
   handlePostRoomNextTurn,
+  handlePutRoomPlayerNextColor,
   monitorPlayerLastSeen,
 };
