@@ -22,7 +22,10 @@ const LobbyPage = () => {
   const playerName = useSelector(state => state.playerName);
 
   const isHost = !!roomState.players.find(p => p.playerName === playerName && p.isHost);
-  const hostCanStartGame = isHost && roomState.players.length > 1;
+  const playerColors = roomState.players.reduce((acc, p) => [...acc, p.color], []);
+  const hostCanStartGame = isHost
+    && roomState.players.length > 1
+    && !playerColors.every(p => p === playerColors[0]);
 
   // Check room state while waiting.
   useEffect(() => {
@@ -73,14 +76,18 @@ const LobbyPage = () => {
       <FlexContainer>
         <Text>{`You are in "${roomState.roomName}"`}</Text>
         <PlayerList />
-        {hostCanStartGame == false && (
-          <Text style={{ margin: 15, textAlign: 'center' }}>
-            The host can start the game after two or more players have joined.
+        {hostCanStartGame == false ? (
+          <Text
+            style={{
+              margin: 15,
+              textAlign: 'center',
+              maxWidth: 600,
+            }}>
+            The host can start the game after two or more players have joined, and more than one team color is selected.
           </Text>
-        )}
-        <Fader when={hostCanStartGame === true}>
+        ) : (
           <Button onClick={startGame}>Start game</Button>
-        </Fader>
+        )}
       </FlexContainer>
     </Fader>
   );
