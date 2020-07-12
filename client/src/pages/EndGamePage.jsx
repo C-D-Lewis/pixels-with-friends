@@ -7,7 +7,7 @@ import Fader from '../components/Fader.jsx';
 import FlexContainer from '../components/FlexContainer.jsx';
 import PlayerList from '../components/PlayerList.jsx';
 import Text from '../components/Text.jsx';
-import WinnerView from '../components/WinnerView.jsx';
+import WinningTeamView from '../components/WinningTeamView.jsx';
 import audioService from '../services/audioService';
 
 /**
@@ -32,8 +32,14 @@ const EndGamePage = () => {
       <FlexContainer style={{ marginBottom: 15 }}>
         <Text>{`We have a winner!`}</Text>
         <FlexContainer style={{ marginTop: 15 }}>
-          <WinnerView />
-          <Text>The final scores...</Text>
+          <WinningTeamView />
+          <Text
+            style={{
+              margin: '25px 0px 0px 0px',
+              fontSize: '1.3rem',
+            }}>
+            The final scores:
+          </Text>
           <PlayerList />
         </FlexContainer>
         <Button onClick={() => dispatch(setPage(Pages.Landing))}>Play again</Button>
