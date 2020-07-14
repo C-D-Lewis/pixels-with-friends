@@ -11,14 +11,15 @@ const Input = ({ placeholder, value, onChange }) => (
     type="text"
     value={value}
     style={{
-      fontSize: '1.2rem',
+      minWidth: 250,
+      fontSize: '1.1rem',
       color: 'black',
-      backgroundColor: '#fff',
+      backgroundColor: '#0001',
       margin: '10px 0px',
-      padding: '5px 5px',
+      padding: '7px',
       textAlign: 'center',
       outline: 'none',
-      border: '1px solid #444',
+      border: 'none',
       borderRadius: 5,
     }}
     placeholder={placeholder}

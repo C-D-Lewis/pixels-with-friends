@@ -25,7 +25,7 @@ const Game = () => {
   const page = useSelector(state => state.page);
   const roomState =useSelector(state => state.roomState);
 
-  let backgroundColor = '#393939';
+  let backgroundColor = '#666';
   if (roomState && page === Pages.InGame) {
     const currentPlayer = roomState.players.find(p => p.playerName === roomState.currentPlayer);
     if (currentPlayer) {
@@ -52,7 +52,20 @@ const Game = () => {
         backgroundColor,
         transition: '1s',
       }}>
-      <Title>Pixels With Friends</Title>
+      <FlexContainer style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        margin: '15px 0px',
+      }}>
+        <img
+          src="assets/images/logo.png"
+          style={{
+            width: 48,
+            height: 48,
+            marginRight: 20,
+          }}/>
+        <Title>Pixels With Friends</Title>
+      </FlexContainer>
       {page == Pages.Landing && <LandingPage />}
       {page == Pages.Lobby && <LobbyPage />}
       {page == Pages.InGame && <InGamePage />}

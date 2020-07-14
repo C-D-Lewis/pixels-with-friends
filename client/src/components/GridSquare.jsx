@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { SQUARE_SIZE, PlayerColors } from '../constants';
+import { SQUARE_SIZE, PlayerColors, SquareTypes } from '../constants';
 import { setRoomState } from '../actions';
 import FlexContainer from './FlexContainer.jsx';
 import audioService from '../services/audioService';
@@ -62,6 +62,15 @@ const GridSquare = ({ square }) => {
         transform: `rotateY(${square.playerName ? 180 : 0}deg)`,
         transition: '0.4s',
       }}>
+      {square.playerName !== null && square.type === SquareTypes.Double && (
+        <img
+          src="assets/images/2x.png"
+          style={{
+            width: SQUARE_SIZE,
+            height: SQUARE_SIZE,
+            transform: 'scaleX(-1)',
+          }} />
+      )}
     </FlexContainer>
   );
 };

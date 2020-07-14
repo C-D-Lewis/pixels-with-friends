@@ -11,7 +11,6 @@ const Title = ({ children }) => (
     style={{
       fontSize: '2rem',
       color: 'white',
-      margin: '25px 10px 0px 0px',
       cursor: 'default',
     }}>
     {children}

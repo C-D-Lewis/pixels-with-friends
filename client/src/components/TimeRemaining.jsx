@@ -7,6 +7,15 @@ import Text from './Text.jsx';
 import FlexContainer from './FlexContainer.jsx';
 import apiService from '../services/apiService';
 
+/** Timer interval */
+const TIMER_INTERVAL_MS = 500;
+
+/**
+ * Zeropad a number.
+ *
+ * @param {number} v - Value to pad.
+ * @returns {number} Padded value.
+ */
 const zeroPad = v => v < 10 ? `0${v}` : v;
 
 /**
@@ -30,15 +39,15 @@ const TimeRemaining = () => {
       const { timeRemaining: trNow } = store.getState();
       if (trNow <= 0) return;
 
-      dispatch(setTimeRemaining(trNow - 500));
-    }, 500);
+      dispatch(setTimeRemaining(trNow - TIMER_INTERVAL_MS));
+    }, TIMER_INTERVAL_MS);
 
     return () => clearInterval(handle);
   }, []);
 
   // When time's up, signal next player's turn
   useEffect(() => {
-    if (timeRemaining < 500 && myTurn) {
+    if (timeRemaining < TIMER_INTERVAL_MS && myTurn) {
       apiService.nextTurn();
       return;
     }
@@ -76,6 +85,8 @@ const TimeRemaining = () => {
               backgroundColor: 'white',
               height: 5,
               width: `${width}px`,
+              transition: '0.5s',
+              transitionTimingFunction: 'linear',
             }} />
         </FlexContainer>
       )}

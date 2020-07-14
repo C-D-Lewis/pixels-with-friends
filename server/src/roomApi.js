@@ -2,13 +2,13 @@ const { omit } = require('lodash');
 
 const {
   GRID_SIZE,
-  SCORE_AMOUNT_SINGLE,
   PlayerColors,
   randomInt,
   createRoom,
   createPlayer,
   findSurroundedSquares,
   findRuns,
+  getSquareValue,
 } = require('./util');
 
 /** Max players */
@@ -124,7 +124,7 @@ const handlePostRoomSquare = (req, res) => {
   // Set ownership and aware points - client validates it is a free square
   const { grid, players } = room;
   grid[row][col].playerName = playerName;
-  player.score += SCORE_AMOUNT_SINGLE;
+  player.score += getSquareValue(grid[row][col].type);
   console.log(`Player ${playerName} placed at ${col}:${row}`);
 
   // Find tiles surrounded for conversion

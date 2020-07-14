@@ -4,18 +4,40 @@ const GRID_SIZE = 9;
 const SCORE_AMOUNT_SINGLE = 10;
 /** Minimum run length */
 const RUN_COUNT_MIN = 4;
+/** Chance a square is a double square */
+const DOUBLE_SQUARE_CHANCE = 10;
 
-/** Player colors */
+/** Player colors - must sync */
 const PlayerColors = [
-  { name: 'blue', light: '#2196F3', dark: '#1976D2' },
-  { name: 'red', light: '#F44336', dark : '#D32F2F' },
-  { name: 'green', light: '#4CAF50', dark : '#388E3C' },
-  { name: 'yellow', light: '#FFEB3B', dark : '#FBC02D' },
-  { name: 'purple', light: '#9C27B0', dark : '#7B1FA2' },
-  { name: 'pink', light: '#F06292', dark : '#EC407A' },
-  { name: 'orange', light: '#FF9800', dark : '#F57C00' },
-  { name: 'cyan', light: '#00BCD4', dark : '#0097A7' },
+  { name: 'blue',   light: '#2196F3', dark: '#1976D2' },
+  { name: 'red',    light: '#F44336', dark: '#D32F2F' },
+  { name: 'green',  light: '#4CAF50', dark: '#388E3C' },
+  { name: 'yellow', light: '#FFEB3B', dark: '#FBC02D' },
+  { name: 'purple', light: '#9C27B0', dark: '#7B1FA2' },
+  { name: 'pink',   light: '#F06292', dark: '#EC407A' },
+  { name: 'orange', light: '#FF9800', dark: '#F57C00' },
+  { name: 'cyan',   light: '#00BCD4', dark: '#0097A7' },
 ];
+
+/** Special square types - must sync */
+const SquareTypes = {
+  Single: 'single',
+  Double: 'double',
+};
+
+/**
+ * Get a square's value by its type.
+ *
+ * @param {string} type - SquareTypes value.
+ * @returns {number} Score value.
+ */
+const getSquareValue = (type) => {
+  const map = {
+    [SquareTypes.Single]: SCORE_AMOUNT_SINGLE,
+    [SquareTypes.Double]: 2 * SCORE_AMOUNT_SINGLE,
+  };
+  return map[type];
+};
 
 /**
  * Generate a new grid square data object.
@@ -28,6 +50,7 @@ const generateGridSquare = (row, col) => ({
   key: `${row}:${col}`,
   playerName: null,
   inShape: false,
+  type: SquareTypes.Single,  // TODO Randomise double tiles, other tyles...
 });
 
 /**
@@ -36,14 +59,19 @@ const generateGridSquare = (row, col) => ({
  * @returns {Object[]} Array of rows.
  */
 const generateGrid = () => {
-  const result = [];
+  const newGrid = [];
   for (let row = 0; row < GRID_SIZE; row++) {
-    result[row] = [];
+    newGrid[row] = [];
     for (let col = 0; col < GRID_SIZE; col++) {
-      result[row][col] = generateGridSquare(row, col);
+      newGrid[row][col] = generateGridSquare(row, col);
+
+      // Chance of a double square
+      if (randomInt(0, 100) < DOUBLE_SQUARE_CHANCE) {
+        newGrid[row][col].type = SquareTypes.Double;
+      }
     }
   }
-  return result;
+  return newGrid;
 };
 
 /**
@@ -119,10 +147,10 @@ const findSurroundedSquares = (room) => {
       if (!nOwner || !neighbors.every(p => p === nOwner) || nOwner === owner) continue;
 
       // Surrounding player takes over
-      console.log(`Player ${nOwner} claimed tile ${x}:${y} from ${owner}`);
+      console.log(`Player ${nOwner} claimed square ${x}:${y} from ${owner}`);
       grid[y][x].playerName = nOwner;
       const nOwnerPlayer = players.find(p => p.playerName === nOwner);
-      nOwnerPlayer.score += 5 * SCORE_AMOUNT_SINGLE;
+      nOwnerPlayer.score += 5 * getSquareValue(grid[y][x].type);
       nOwnerPlayer.conversions++;
     }
   }
@@ -153,16 +181,16 @@ const findRun = (grid, players, owner, y, x, dy, dx) => {
   const runLength = runLocations.length;
   if (runLength < RUN_COUNT_MIN) return;
 
-  // Award points
+  // Award points for each tile's value
   const ownerPlayer = players.find(p => p.playerName === owner);
-  ownerPlayer.score += runLength * SCORE_AMOUNT_SINGLE;
+  runLocations.forEach(([b, a]) => {
+    grid[b][a].inShape = true;
+    ownerPlayer.score += getSquareValue(grid[b][a].type);
+  });
   ownerPlayer.runs++;
   if (runLength > ownerPlayer.bestRunLength) {
     ownerPlayer.bestRunLength = runLength;
   }
-  runLocations.forEach(([a, b]) => {
-    grid[a][b].inShape = true;
-  });
 };
 
 /**
@@ -189,11 +217,11 @@ const findRuns = (room) => {
 
 module.exports = {
   GRID_SIZE,
-  SCORE_AMOUNT_SINGLE,
   PlayerColors,
   randomInt,
   createRoom,
   createPlayer,
   findSurroundedSquares,
   findRuns,
+  getSquareValue,
 };
