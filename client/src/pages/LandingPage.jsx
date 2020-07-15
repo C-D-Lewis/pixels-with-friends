@@ -82,22 +82,26 @@ const LandingPage = () => {
             placeholder="Type a name..."
             value={playerName}
             onChange={v => dispatch(setPlayerName(v))}/>
-          <Text style={cardTextStyle}>
-            Room Name
-          </Text>
-          <Input
-            placeholder="Type a name..."
-            value={roomName}
-            onChange={v => dispatch(setRoomName(v))}/>
-          <Button
-            disabled={!readyToJoin}
-            style={{ marginTop: 10 }}
-            onClick={() => enterRoom(roomName)}>
-            Join room
-          </Button>
+          {playerName.length > 1 && (
+            <FlexContainer>
+              <Text style={cardTextStyle}>
+                Room Name
+              </Text>
+              <Input
+                placeholder="Type a name..."
+                value={roomName}
+                onChange={v => dispatch(setRoomName(v))}/>
+              <Button
+                disabled={!readyToJoin}
+                style={{ marginTop: 10 }}
+                onClick={() => enterRoom(roomName)}>
+                Join room
+              </Button>
+            </FlexContainer>
+          )}
         </Card>
 
-        {rooms && rooms.length > 0 && (
+        {rooms && rooms.length > 0 && playerName.length > 1 && (
           <FlexContainer style={{ marginTop: 10 }}>
             <Subtitle>Open Rooms:</Subtitle>
             {rooms.map(p => <RoomListItem key={p.roomName} room={p} />)}
