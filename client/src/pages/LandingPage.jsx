@@ -70,53 +70,50 @@ const LandingPage = () => {
   }, []);
 
   const cardTextStyle = { margin: '10px 5px 0px 0px', color: 'black' };
+  const ruleLineStyle = { margin: '4px 4px 8px 20px' };
+  const joinable = playerName.length > 1;
+  const showRooms = rooms && rooms.length > 0 && joinable;
 
   return (
     <Fader>
-      <FlexContainer style={{ marginTop: 15, height: '100%' }}>
-        <Card>
-          <Text style={cardTextStyle}>
-            Player Name
-          </Text>
+      <FlexContainer style={{ height: '100%' }}>
+        <Card collapsed={!joinable} minHeight={70} maxHeight={300}>
+          <Text style={cardTextStyle}>Player Name</Text>
           <Input
             placeholder="Type a name..."
             value={playerName}
             onChange={v => dispatch(setPlayerName(v))}/>
-          {playerName.length > 1 && (
-            <FlexContainer>
-              <Text style={cardTextStyle}>
-                Room Name
-              </Text>
-              <Input
-                placeholder="Type a name..."
-                value={roomName}
-                onChange={v => dispatch(setRoomName(v))}/>
-              <Button
-                disabled={!readyToJoin}
-                style={{ marginTop: 10 }}
-                onClick={() => enterRoom(roomName)}>
-                Join room
-              </Button>
-            </FlexContainer>
-          )}
+          <FlexContainer>
+            <Text style={cardTextStyle}>Room Name</Text>
+            <Input
+              placeholder="Type a name..."
+              value={roomName}
+              onChange={v => dispatch(setRoomName(v))}/>
+            <Button
+              disabled={!readyToJoin}
+              style={{ marginTop: 10 }}
+              onClick={() => enterRoom(roomName)}>
+              Join room
+            </Button>
+          </FlexContainer>
         </Card>
 
-        {rooms && rooms.length > 0 && playerName.length > 1 && (
-          <FlexContainer style={{ marginTop: 10 }}>
+        {showRooms == true && (
+          <Card collapsed={false} minHeight={0} maxHeight={300}>
             <Subtitle>Open Rooms:</Subtitle>
             {rooms.map(p => <RoomListItem key={p.roomName} room={p} />)}
-          </FlexContainer>
+          </Card>
         )}
 
         <FlexContainer style={{ alignItems: 'start' }}>
-          <Subtitle>How to Play</Subtitle>
-          <Text style={{ margin: '4px 4px 8px 20px' }}>
+          <Subtitle style={{ marginTop: 25, color: 'white' }}>How to Play</Subtitle>
+          <Text style={ruleLineStyle}>
             - Create a run of four or more for bonus points.
           </Text>
-          <Text style={{ margin: '4px 4px 8px 20px' }}>
+          <Text style={ruleLineStyle}>
             - Surround another player's tile on all four sides to capture it.
           </Text>
-          <Text style={{ margin: '4px 4px 8px 20px' }}>
+          <Text style={ruleLineStyle}>
             - Look out for 2x tiles for double points.
           </Text>
         </FlexContainer>

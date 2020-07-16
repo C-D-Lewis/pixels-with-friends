@@ -7,14 +7,14 @@ import Text from './Text.jsx';
  * @param {Object} props - Component props.
  * @returns {HTMLElement}
  */
-const Subtitle = ({ children }) => (
+const Subtitle = ({ children, style }) => (
   <Text
     style={{
       fontSize: '1.3rem',
-      marginTop: 25,
-      marginLeft: 'auto',
-      marginRight: 'auto',
+      margin: '0px auto 10px auto',
       textDecoration: 'underline',
+      color: 'black',
+      ...style,
     }}>
     {children}
   </Text>

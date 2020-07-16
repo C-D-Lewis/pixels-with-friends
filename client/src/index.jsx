@@ -55,7 +55,7 @@ const Game = () => {
       <FlexContainer style={{
         flexDirection: 'row',
         alignItems: 'center',
-        margin: '15px 0px',
+        margin: '25px 0px 10px 0px',
       }}>
         <img
           src="assets/images/logo.png"
