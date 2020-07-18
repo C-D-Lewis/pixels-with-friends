@@ -106,7 +106,9 @@ const LandingPage = () => {
         )}
 
         <FlexContainer style={{ alignItems: 'start' }}>
-          <Subtitle style={{ marginTop: 25, color: 'white' }}>How to Play</Subtitle>
+          <Subtitle color="white">
+            How to Play
+          </Subtitle>
           <Text style={ruleLineStyle}>
             - Create a run of four or more for bonus points.
           </Text>

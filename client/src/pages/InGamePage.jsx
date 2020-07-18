@@ -40,7 +40,11 @@ const InGamePage = () => {
     }
 
     // Winner?
-    if (roomState.allSquaresFilled) dispatch(setPage(Pages.EndGame));
+    if (roomState.allSquaresFilled) {
+      setTimeout(() => {
+        dispatch(setPage(Pages.EndGame));
+      }, 1000);
+    }
   }, [roomState]);
 
   return (

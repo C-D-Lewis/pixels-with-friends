@@ -82,7 +82,7 @@ const Game = () => {
  */
 const Application = () => (
   <Provider store={store}>
-    <Game/>
+    <Game />
   </Provider>
 );
 

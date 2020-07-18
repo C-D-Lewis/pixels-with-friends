@@ -39,7 +39,7 @@ const WinningTeamView = () => {
         backgroundColor: PlayerColors.find(p => p.name === topTeam.color).dark,
         borderRadius: 15,
       }}>
-      <Text style={{ fontSize: '1.8rem' }}>{`${teamName} team`}</Text>
+      <Text style={{ fontSize: '1.8rem' }}>{`${teamName} team wins!`}</Text>
     </FlexContainer>
   );
 };

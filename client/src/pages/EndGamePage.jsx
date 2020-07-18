@@ -7,6 +7,7 @@ import Fader from '../components/Fader.jsx';
 import FlexContainer from '../components/FlexContainer.jsx';
 import PlayerList from '../components/PlayerList.jsx';
 import Text from '../components/Text.jsx';
+import Subtitle from '../components/Subtitle.jsx';
 import WinningTeamView from '../components/WinningTeamView.jsx';
 import audioService from '../services/audioService';
 
@@ -24,22 +25,16 @@ const EndGamePage = () => {
   // Play applause when shown
   useEffect(() => audioService.play('applause.mp3'), []);
 
-  // TODO - Overall team winner
   // TOOD - stats - most points, conversions, most runs, best run length
 
   return (
     <Fader>
       <FlexContainer style={{ marginBottom: 15 }}>
-        <Text>{`We have a winner!`}</Text>
-        <FlexContainer style={{ marginTop: 15 }}>
+        <FlexContainer style={{ marginTop: 5 }}>
           <WinningTeamView />
-          <Text
-            style={{
-              margin: '25px 0px 0px 0px',
-              fontSize: '1.3rem',
-            }}>
+          <Subtitle color="white">
             The final scores:
-          </Text>
+          </Subtitle>
           <PlayerList />
         </FlexContainer>
         <Button onClick={() => dispatch(setPage(Pages.Landing))}>Play again</Button>

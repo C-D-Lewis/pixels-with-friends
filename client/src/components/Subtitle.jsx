@@ -7,13 +7,13 @@ import Text from './Text.jsx';
  * @param {Object} props - Component props.
  * @returns {HTMLElement}
  */
-const Subtitle = ({ children, style }) => (
+const Subtitle = ({ children, color = 'black', style }) => (
   <Text
     style={{
       fontSize: '1.3rem',
-      margin: '0px auto 10px auto',
+      margin: '25px auto 5px auto',
       textDecoration: 'underline',
-      color: 'black',
+      color,
       ...style,
     }}>
     {children}
