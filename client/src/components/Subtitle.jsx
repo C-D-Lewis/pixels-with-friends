@@ -12,7 +12,6 @@ const Subtitle = ({ children, color = 'black', style }) => (
     style={{
       fontSize: '1.3rem',
       margin: '25px auto 5px auto',
-      textDecoration: 'underline',
       color,
       ...style,
     }}>

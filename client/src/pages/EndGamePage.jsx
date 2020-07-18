@@ -9,6 +9,7 @@ import PlayerList from '../components/PlayerList.jsx';
 import Text from '../components/Text.jsx';
 import Subtitle from '../components/Subtitle.jsx';
 import WinningTeamView from '../components/WinningTeamView.jsx';
+import StatsTable from '../components/StatsTable.jsx';
 import audioService from '../services/audioService';
 
 /**
@@ -32,12 +33,16 @@ const EndGamePage = () => {
       <FlexContainer style={{ marginBottom: 15 }}>
         <FlexContainer style={{ marginTop: 5 }}>
           <WinningTeamView />
-          <Subtitle color="white">
-            The final scores:
-          </Subtitle>
+          <Subtitle color="white">The final scores:</Subtitle>
           <PlayerList />
         </FlexContainer>
-        <Button onClick={() => dispatch(setPage(Pages.Landing))}>Play again</Button>
+        <FlexContainer style={{ marginTop: 5 }}>
+          <Subtitle color="white">Detailed stats:</Subtitle>
+          <StatsTable />
+        </FlexContainer>
+        <FlexContainer style={{ marginTop: 10 }}>
+          <Button onClick={() => dispatch(setPage(Pages.Landing))}>Play again</Button>
+        </FlexContainer>
       </FlexContainer>
     </Fader>
   );
