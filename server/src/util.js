@@ -78,10 +78,13 @@ const generateGrid = () => {
  * Create a player object.
  *
  * @param {string} playerName - Player name as they chose.
+ * @param {number} index - Player index.
+ * @param {number} botLevel - Specified if a player is bot. Levels are 0 - 2 for easy, medium, hard.
  * @returns {Object} The player object.
  */
-const createPlayer = (playerName, index) => ({
+const createPlayer = (playerName, index, botLevel) => ({
   playerName,
+  botLevel,
   score: 0,
   lastSeen: Date.now(),
   color: PlayerColors[index].name,

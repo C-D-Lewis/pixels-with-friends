@@ -22,6 +22,35 @@ const PLAYER_LAST_SEEN_MAX_MS = 10000;
 const rooms = [];
 
 /**
+ * Helper to get the room. If not found, handle response.
+ *
+ * @param {Object} req - Request object.
+ * @returns {Object} Room if found, false otherwise.
+ */
+const getRoomOrRespond = (req, res) => {
+  const room = rooms.find(p => p.roomName === req.params.roomName);
+  if (!room) res.status(404).json({ error: 'Room not found' });
+
+  return room;
+};
+
+/**
+ * Helper to get the player.
+ *
+ * @param {Object} req - Request object.
+ * @returns {Object} Player if found.
+ */
+const getPlayerOrRespond = (req, res) => {
+  const room = getRoomOrRespond(req, res);
+  if (!room) return false;
+
+  const player = room.players.find(p => p.playerName === req.params.playerName);
+  if (!player) res.status(404).json({ error: 'Player not found' });
+
+  return player;
+};
+
+/**
  * Handle GET /rooms requests. A summary is returned
  *
  * @param {Object} req - Request object.
@@ -66,18 +95,17 @@ const handleGetRoom = (req, res) => {
  * @param {Object} res - Response object.
  */
 const handlePutRoomPlayer = (req, res) => {
-  const { roomName } = req.params;
-  const { playerName } = req.body;
-
-  const room = rooms.find(p => p.roomName === roomName);
-  if (!room) return res.status(404).json({ error: 'Room not found' });
+  const room = getRoomOrRespond(req, res);
+  if (!room) return;
   if (room.players.length === MAX_PLAYERS) return res.status(409).json({ error: 'Room is full' });
+
+  const { playerName } = req.body;
   let player = room.players.find(p => p.playerName === playerName);
   if (player) return res.status(409).json({ error: 'Player already in the room' });
 
   const nextIndex = room.players.length;
   player = createPlayer(playerName, nextIndex);
-  console.log(`Player ${playerName} joined ${roomName}`);
+  console.log(`Player ${playerName} joined ${room.roomName}`);
 
   // Mark the host, who must stay for the length of the game
   if (nextIndex === 0) {
@@ -96,13 +124,12 @@ const handlePutRoomPlayer = (req, res) => {
  * @param {Object} res - Response object.
  */
 const handlePutRoomInGame = (req, res) => {
-  const { roomName } = req.params;
-  const room = rooms.find(p => p.roomName === roomName);
-  if (!room) return res.status(404).json({ error: 'Room not found' });
+  const room = getRoomOrRespond(req, res);
+  if (!room) return;
 
   // Set the game as in progress, clients poll for this
   room.inGame = true;
-  console.log(`Room ${roomName} is now in game`);
+  console.log(`Room ${room.roomName} is now in game`);
   return res.status(200).json(room);
 };
 
@@ -113,11 +140,10 @@ const handlePutRoomInGame = (req, res) => {
  * @param {Object} res - Response object.
  */
 const handlePostRoomSquare = (req, res) => {
-  const { roomName } = req.params;
   const { playerName, row, col } = req.body;
 
-  const room = rooms.find(p => p.roomName === roomName);
-  if (!room) return res.status(404).json({ error: 'Room not found' });
+  const room = getRoomOrRespond(req, res);
+  if (!room) return;
   const player = room.players.find(p => p.playerName === playerName);
   if (!player) return res.status(404).json({ error: 'Player not found' });
 
@@ -132,9 +158,8 @@ const handlePostRoomSquare = (req, res) => {
   findRuns(room);
 
   // Winner?
-  room.allSquaresFilled = grid.every((row) => {
-    return row.every(square => !!square.playerName);
-  }, false);
+  room.allSquaresFilled = grid
+    .every(row => row.every(square => !!square.playerName), false);
   if (room.allSquaresFilled) {
     room.inGame = false;
   }
@@ -154,12 +179,13 @@ const handlePostRoomSquare = (req, res) => {
  * @param {Object} res - Response object.
  */
 const handlePostRoomTestEndgame = (req, res) => {
-  const { roomName } = req.params;
+  const room = getRoomOrRespond(req, res);
+  if (!room) return;
 
-  const room = rooms.find(p => p.roomName === roomName);
   for (let row = 0; row < GRID_SIZE; row++) {
     for (let col = 0; col < GRID_SIZE; col++) {
-      room.grid[row][col].playerName = room.players[randomInt(0, room.players.length - 1)].playerName;
+      const playerIndex = randomInt(0, room.players.length - 1);
+      room.grid[row][col].playerName = room.players[playerIndex].playerName;
     }
   }
 
@@ -177,10 +203,8 @@ const handlePostRoomTestEndgame = (req, res) => {
  * @param {Object} res - Response object.
  */
 const handlePostRoomNextTurn = (req, res) => {
-  const { roomName } = req.params;
-
-  const room = rooms.find(p => p.roomName === roomName);
-  if (!room) return res.status(404).json({ error: 'Room not found' });
+  const room = getRoomOrRespond(req, res);
+  if (!room) return;
 
   const { players } = room;
   const currentPlayer = players.find(p => p.playerName === room.currentPlayer);
@@ -198,12 +222,10 @@ const handlePostRoomNextTurn = (req, res) => {
  * @param {Object} res - Response object.
  */
 const handlePutRoomPlayerNextColor = (req, res) => {
-  const { roomName, playerName } = req.params;
-
-  const room = rooms.find(p => p.roomName === roomName);
-  if (!room) return res.status(404).json({ error: 'Room not found' });
-  const player = room.players.find(p => p.playerName === playerName);
-  if (!player) return res.status(404).json({ error: 'Player not found' });
+  const room = getRoomOrRespond(req, res);
+  if (!room) return;
+  const player = getPlayerOrRespond(req, res);
+  if (!player) return;
 
   const currentColor = PlayerColors.find(p => p.name === player.color);
   const nextIndex = (PlayerColors.indexOf(currentColor) + 1) % PlayerColors.length;
@@ -211,6 +233,14 @@ const handlePutRoomPlayerNextColor = (req, res) => {
 
   // Respond with new roomState
   return res.status(200).json(room);
+};
+
+const handlePostRoomBot = (req, res) => {
+  const room = getRoomOrRespond(req, res);
+  const player = getPlayerOrRespond(req, res);
+  if (!room || !player) return;
+
+  // Insert a player, type bot. Assign random friendly name and color.
 };
 
 /**
@@ -256,5 +286,6 @@ module.exports = {
   handlePostRoomTestEndgame,
   handlePostRoomNextTurn,
   handlePutRoomPlayerNextColor,
+  handlePostRoomBot,
   monitorPlayerLastSeen,
 };
