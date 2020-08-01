@@ -311,21 +311,21 @@ const findDefensiveMove = (grid, bot) => {
         foundRun = findRunLocations(grid, owner, y, x, 0, 1, minLength);
       }
       if (foundRun) {
+        console.log(`Bot ${bot.playerName} sees opportunity at ${x}:${y}`);
+
         // Move is the next in the run sequence, but could be owned already
         let runCap = {
           x: x + (minLength * foundRun.dx),
           y: y + (minLength * foundRun.dy),
         };
-        console.log({ runCap })
         if (grid[runCap.y][runCap.x].playerName) {
           // Try the other end
           runCap = {
-            x: x - (2 * foundRun.dx),
-            y: y - (2 * foundRun.dy),
+            x: x - foundRun.dx,
+            y: y - foundRun.dy,
           };
         }
-        console.log({ runCap })
-        if (grid[runCap.y][runCap.x].playerName) {
+        if (!isInGrid(runCap.x, runCap.y) || grid[runCap.y][runCap.x].playerName) {
           console.log(`Bot ${bot.playerName} would totally have capped that run`);
           return findRandomMove(grid, bot);
         }
@@ -373,6 +373,7 @@ const emulateBotMove = (room, bot) => {
   }
 
   // Apply the move
+  console.log(`Bot ${bot.playerName} placed at ${move.x}:${move.y}`);
   grid[move.y][move.x].playerName = bot.playerName;
   bot.score += getSquareValue(grid[move.y][move.x].type);
 
