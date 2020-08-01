@@ -35,8 +35,8 @@ const main = () => {
   app.post('/rooms/:roomName/square', handlePostRoomSquare);
   app.post('/rooms/:roomName/testEndGame', handlePostRoomTestEndgame);
   app.post('/rooms/:roomName/nextTurn', handlePostRoomNextTurn);
-  app.put('/rooms/:roomName/bot', handlePutRoomBot);
-  app.put('/rooms/:roomName/bot/:playerName/nextLevel', handlePutRoomBotNextLevel);
+  app.put('/rooms/:roomName/bots', handlePutRoomBot);
+  app.put('/rooms/:roomName/bots/:playerName/nextLevel', handlePutRoomBotNextLevel);
 
   app.listen(PORT, () => console.log(`Server is listening on ${PORT}`));
 

@@ -114,7 +114,19 @@ const nextPlayerColor = async (name) => {
 const putBotInRoom = async () => {
   const { roomName } = store.getState();
 
-  return request('PUT', `/rooms/${roomName}/bot`);
+  return request('PUT', `/rooms/${roomName}/bots`);
+};
+
+/**
+ * Increase a bot's level.
+ *
+ * @param {string} name - Bot name.
+ * @returns {Promise<Object>} Promise resolving to the room response.
+ */
+const botNextLevel = async (name) => {
+  const { roomName } = store.getState();
+
+  return request('PUT', `/rooms/${roomName}/bots/${name}/nextLevel`);
 };
 
 /**
@@ -160,6 +172,7 @@ const apiService = {
   nextTurn,
   nextPlayerColor,
   putBotInRoom,
+  botNextLevel,
   pollRoomState,
   stopPollRoomState,
   pollRooms,

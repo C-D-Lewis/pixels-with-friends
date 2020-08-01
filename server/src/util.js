@@ -118,7 +118,7 @@ const createPlayer = (playerName, index) => ({
 
 /**
  * Create a Bot player object. Bots are like players, but smarter (tm).
- * Bot levels are 1 - easy, 2 - medium, 3 - hard
+ * Bot levels are 0 - easy, 1 - medium, 2 - hard
  *
  * @param {number} index - Player index.
  * @param {Object} room - Room the bot will play in.
@@ -132,7 +132,7 @@ const createBot = (index, room) => {
 
   const bot = createPlayer(botName, index);
   bot.botData = {
-    level: 1,
+    level: 0,
     trait: null,
   }
   return bot;

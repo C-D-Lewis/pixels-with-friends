@@ -64,15 +64,34 @@ const PlayerColorBadge = ({ player }) => {
  */
 const PlayerView = ({ player, sortIndex }) => {
   const page = useSelector(state => state.page);
+  const playerName = useSelector(state => state.playerName);
+  const roomState = useSelector(state => state.roomState);
+
+  const isHost = !!roomState.players.find(p => p.playerName === playerName && p.isHost);
 
   let botLevel;
   if (player.botData) {
     botLevel = {
-      1: 'Easy',
-      2: 'Medium',
-      3: 'Hard',
+      0: 'Easy',
+      1: 'Medium',
+      2: 'Hard',
     }[player.botData.level];
   }
+
+  /**
+   * Increment a bot's level.
+   */
+  const setBotLevel = async () => {
+    if (!isHost) return;
+
+    try {
+      await apiService.botNextLevel(player.playerName);
+      audioService.play('take.mp3');
+    } catch (e) {
+      alert(e);
+      console.log(e);
+    }
+  };
 
   return (
     <FlexContainer style={{ flexDirection: 'row' }}>
@@ -80,7 +99,13 @@ const PlayerView = ({ player, sortIndex }) => {
       <Text>{player.playerName}</Text>
       {page !== Pages.Lobby && <Text style={{ marginLeft: 20 }}>{`${player.score} points`}</Text>}
       {player.isHost == true && <Pill backgroundColor="rgb(234, 186, 0)">Host</Pill>}
-      {player.botData !== null && <Pill backgroundColor="darkgrey">{botLevel}</Pill>}
+      {player.botData !== null && (
+        <Pill
+          onClick={setBotLevel}
+          backgroundColor="darkgrey">
+          {botLevel}
+        </Pill>
+      )}
     </FlexContainer>
   );
 };
