@@ -157,17 +157,6 @@ const handlePostRoomSquare = (req, res) => {
   player.score += getSquareValue(grid[row][col].type);
   console.log(`Player ${playerName} placed at ${col}:${row}`);
 
-  // Find tiles surrounded for conversion
-  findSurroundedSquares(room);
-  findCompletedRuns(room);
-
-  // Winner?
-  room.allSquaresFilled = grid
-    .every(row => row.every(square => !!square.playerName), false);
-  if (room.allSquaresFilled) {
-    room.inGame = false;
-  }
-
   // Next player's turn - has to be done by name in case players drop out
   goToNextPlayer(room);
 

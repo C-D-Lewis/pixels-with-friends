@@ -7,9 +7,9 @@ const RUN_LENGTH_MIN = 4;
 /** Chance a square is a double square */
 const DOUBLE_SQUARE_CHANCE = 10;
 /** Change to place defensively as an easy bot */
-const BOT_EASY_CHANCE = 20;
+const BOT_EASY_CHANCE = 10;
 /** Change to place defensively as a medium bot */
-const BOT_MEDIUM_CHANCE = 50;
+const BOT_MEDIUM_CHANCE = 40;
 
 /** Player colors - must sync */
 const PlayerColors = [
@@ -39,6 +39,10 @@ const BotNames = [
   'Scrap',
   'Spark',
   'Socket',
+  'Pins',
+  'Occular',
+  'Flash',
+  'Ratchet',
 ];
 
 /**
@@ -229,13 +233,15 @@ const findRun = (grid, owner, y, x, dy, dx, minLength) => {
  *
  * @param {Array[]} grid - List of grid rows.
  * @param {number} minLength - Minimum length to count.
+ * @param {string} findOwner - Optional owner to search for
  * @returns {Object} List of run grid locations, along with specified directions.
  */
-const findRunOfLength = (grid, minLength) => {
+const findRunOfLength = (grid, minLength, findOwner) => {
   for (let y = 0; y < GRID_SIZE; y++) {
     for (let x = 0; x < GRID_SIZE; x++) {
       const owner = grid[y][x].playerName;
       if (!owner) continue;
+      if (findOwner && owner !== findOwner) continue;
 
       // Try all of north, south, east, west until a run is found
       let foundRun = findRun(grid, owner, y, x, -1, 0, minLength);
@@ -343,7 +349,31 @@ const findDefensiveMove = (grid, bot) => {
  * @returns {Object} { x, y } The offensive move to use.
  */
 const findOffensiveMove = (grid, bot) => {
-  return findDefensiveMove(grid, bot);
+  // Find a run in progress
+  const minLength = 1;
+  const foundRun = findRunOfLength(grid, minLength);
+  if (foundRun) {
+    const { x, y, dx, dy } = foundRun;
+    console.log(`Bot ${bot.playerName} sees opportunity at ${x}:${y}`);
+
+    // Move is the next in the run sequence, but could be owned already
+    let runCap = { x: x + (minLength * dx), y: y + (minLength * dy) };
+    if (!isInGrid(runCap.x, runCap.y) || grid[runCap.y][runCap.x].playerName) {
+      // Try the other end
+      runCap = { x: x - dx, y: y - dy };
+    }
+    if (!isInGrid(runCap.x, runCap.y) || grid[runCap.y][runCap.x].playerName) {
+      console.log(`Bot ${bot.playerName} would totally have continued that run`);
+      return findRandomMove(grid, bot);
+    }
+    return runCap;
+  }
+
+  // TODO Or, continue a takeover in progress
+
+  // If we can't find any defensive moves, move randomly
+  console.log(`Bot ${bot.playerName} grumbles about a lack of offensive moves`);
+  return findRandomMove(grid, bot);
 };
 
 /**
@@ -360,18 +390,15 @@ const emulateBotMove = (room, bot) => {
   let move;
   switch (level) {
     // Easy
-    case 1:
-      console.log(`Bot ${bot.playerName} is taking it easy`);
-
+    case 0:
       // Chance to play a defensive move
       move = (randomInt(0, 100) < BOT_EASY_CHANCE)
         ? findDefensiveMove(grid, bot)
         : findRandomMove(grid, bot);
+      console.log(`Bot ${bot.playerName} is taking it easy`);
       break;
     // Medium - Always plays defensively (preventing runs, captures)
-    case 2:
-      console.log(`Bot ${bot.playerName} is practicing for the big leagues`);
-
+    case 1:
       // Chance to play a defensive move
       move = (randomInt(0, 100) < BOT_MEDIUM_CHANCE)
         ? findDefensiveMove(grid, bot)
@@ -379,12 +406,16 @@ const emulateBotMove = (room, bot) => {
         : (randomInt(0, 100) < BOT_MEDIUM_CHANCE)
           ? findOffensiveMove(grid, bot)
           : findRandomMove(grid, bot);
+      console.log(`Bot ${bot.playerName} is practicing for the big leagues`);
       break;
     // Hard - always takes an aggressive move (make runs, captures)
-    case 3:
+    case 2:
+      // 50/50 defensive or offensive
+      move = (randomInt(0, 100) < 50)
+        ? findDefensiveMove(grid, bot)
+        : findOffensiveMove(grid, bot);
       console.log(`Bot ${bot.playerName} is taking no prisoners!`);
-
-      // TODO - 50/50 defensive or offensive
+      break;
     default:
       move = findRandomMove(grid, bot);
       break;
@@ -415,6 +446,17 @@ const goToNextPlayer = (room) => {
   const currentPlayer = players.find(p => p.playerName === room.currentPlayer);
   const nextIndex = (players.indexOf(currentPlayer) + 1) % players.length;
   room.currentPlayer = players[nextIndex].playerName;
+
+  // Find tiles surrounded for conversion
+  findSurroundedSquares(room);
+  findCompletedRuns(room);
+
+  // Winner?
+  room.allSquaresFilled = room.grid
+    .every(row => row.every(square => !!square.playerName), false);
+  if (room.allSquaresFilled) {
+    room.inGame = false;
+  }
 
   // If next player is a bot, emulate thinking time, then take a turn
   const nextPlayer = players.find(p => p.playerName === room.currentPlayer);
