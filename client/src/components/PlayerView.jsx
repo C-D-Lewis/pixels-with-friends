@@ -65,12 +65,22 @@ const PlayerColorBadge = ({ player }) => {
 const PlayerView = ({ player, sortIndex }) => {
   const page = useSelector(state => state.page);
 
+  let botLevel;
+  if (player.botData) {
+    botLevel = {
+      1: 'Easy',
+      2: 'Medium',
+      3: 'Hard',
+    }[player.botData.level];
+  }
+
   return (
     <FlexContainer style={{ flexDirection: 'row' }}>
       <PlayerColorBadge player={player} />
       <Text>{player.playerName}</Text>
       {page !== Pages.Lobby && <Text style={{ marginLeft: 20 }}>{`${player.score} points`}</Text>}
       {player.isHost == true && <Pill backgroundColor="rgb(234, 186, 0)">Host</Pill>}
+      {player.botData !== null && <Pill backgroundColor="darkgrey">{botLevel}</Pill>}
     </FlexContainer>
   );
 };

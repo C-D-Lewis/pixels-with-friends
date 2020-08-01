@@ -7,7 +7,7 @@ const RUN_LENGTH_MIN = 4;
 /** Chance a square is a double square */
 const DOUBLE_SQUARE_CHANCE = 10;
 /** Change to place defensively as an easy bot */
-const BOT_EASY_DEFENSIVE_CHANCE = 99;
+const BOT_EASY_DEFENSIVE_CHANCE = 20;
 
 /** Player colors - must sync */
 const PlayerColors = [
