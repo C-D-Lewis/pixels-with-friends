@@ -83,6 +83,7 @@ const PlayerView = ({ player, sortIndex }) => {
    */
   const setBotLevel = async () => {
     if (!isHost) return;
+    if (roomState.inGame) return;
 
     try {
       await apiService.botNextLevel(player.playerName);

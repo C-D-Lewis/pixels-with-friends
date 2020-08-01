@@ -7,7 +7,9 @@ const RUN_LENGTH_MIN = 4;
 /** Chance a square is a double square */
 const DOUBLE_SQUARE_CHANCE = 10;
 /** Change to place defensively as an easy bot */
-const BOT_EASY_DEFENSIVE_CHANCE = 20;
+const BOT_EASY_CHANCE = 20;
+/** Change to place defensively as a medium bot */
+const BOT_MEDIUM_CHANCE = 50;
 
 /** Player colors - must sync */
 const PlayerColors = [
@@ -324,12 +326,25 @@ const findDefensiveMove = (grid, bot) => {
     return runCap;
   }
 
-  // Or, defeat a takeover in progress
+  // TODO Or, defeat a takeover in progress
 
   // If we can't find any defensive moves, move randomly
   console.log(`Bot ${bot.playerName} grumbles about a lack of defensive moves`);
   return findRandomMove(grid, bot);
-}
+};
+
+/**
+ * Find an offensive move, either:
+ * - Continuing a run in progress
+ * - Continuing a capture in progress
+ *
+ * @param {Object} grid - Room grid to use.
+ * @param {Object} bot - Bot player taking their turn.
+ * @returns {Object} { x, y } The offensive move to use.
+ */
+const findOffensiveMove = (grid, bot) => {
+  return findDefensiveMove(grid, bot);
+};
 
 /**
  * Emulate a bot thinking, then taking their turn.
@@ -349,16 +364,27 @@ const emulateBotMove = (room, bot) => {
       console.log(`Bot ${bot.playerName} is taking it easy`);
 
       // Chance to play a defensive move
-      move = (randomInt(0, 100) < BOT_EASY_DEFENSIVE_CHANCE)
+      move = (randomInt(0, 100) < BOT_EASY_CHANCE)
         ? findDefensiveMove(grid, bot)
         : findRandomMove(grid, bot);
       break;
     // Medium - Always plays defensively (preventing runs, captures)
     case 2:
       console.log(`Bot ${bot.playerName} is practicing for the big leagues`);
+
+      // Chance to play a defensive move
+      move = (randomInt(0, 100) < BOT_MEDIUM_CHANCE)
+        ? findDefensiveMove(grid, bot)
+        // Chance to play an offensive move
+        : (randomInt(0, 100) < BOT_MEDIUM_CHANCE)
+          ? findOffensiveMove(grid, bot)
+          : findRandomMove(grid, bot);
+      break;
     // Hard - always takes an aggressive move (make runs, captures)
     case 3:
       console.log(`Bot ${bot.playerName} is taking no prisoners!`);
+
+      // TODO - 50/50 defensive or offensive
     default:
       move = findRandomMove(grid, bot);
       break;
@@ -395,7 +421,7 @@ const goToNextPlayer = (room) => {
   if (!nextPlayer.botData) return;
 
   console.log(`Bot ${room.currentPlayer} is thinking of a move...`);
-  setTimeout(() => emulateBotMove(room, nextPlayer), randomInt(1000, 3000));
+  setTimeout(() => emulateBotMove(room, nextPlayer), 3000 - (nextPlayer.botData.level * 1000));
 };
 
 module.exports = {
