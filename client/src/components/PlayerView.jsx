@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { SQUARE_SIZE, Pages, PlayerColors } from '../constants';
 import FlexContainer from './FlexContainer.jsx';
-import HostPill from './HostPill.jsx';
+import Pill from './Pill.jsx';
 import Text from './Text.jsx';
 import apiService from '../services/apiService';
 import audioService from '../services/audioService';
@@ -53,7 +53,8 @@ const PlayerView = ({ player, sortIndex }) => {
       <PlayerColorBadge player={player} />
       <Text>{player.playerName}</Text>
       {page !== Pages.Lobby && <Text style={{ marginLeft: 20 }}>{`${player.score} points`}</Text>}
-      {player.isHost == true && <HostPill />}
+      {player.isHost == true && <Pill backgroundColor="rgb(234, 186, 0)">Host</Pill>}
+      {player.botData !== null && <Pill backgroundColor="darkgrey">CPU</Pill>}
     </FlexContainer>
   );
 };

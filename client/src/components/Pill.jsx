@@ -1,22 +1,22 @@
 import React from 'react';
 
 /**
- * HostPill component.
+ * Pill component.
  *
  * @param {Object} props - Component props.
  * @returns {HTMLElement}
  */
-const HostPill = () => (
+const Pill = ({ children, backgroundColor }) => (
   <div
     style={{
-      backgroundColor: 'rgb(234, 186, 0)',
+      backgroundColor,
       color: 'white',
       padding: '3px 8px',
       marginLeft: 10,
       borderRadius: 50,
     }}>
-    Host
+    {children}
   </div>
 );
 
-export default HostPill;
+export default Pill;

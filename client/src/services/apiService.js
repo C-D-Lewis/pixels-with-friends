@@ -106,6 +106,17 @@ const nextPlayerColor = async () => {
 };
 
 /**
+ * Add a new bot to the room.
+ *
+ * @returns {Promise<Object>} Promise resolving to the room response.
+ */
+const putBotInRoom = async () => {
+  const { roomName } = store.getState();
+
+  return request('PUT', `/rooms/${roomName}/bot`);
+};
+
+/**
  * Poll the room state, and by doing so keep the player alive in the server's eyes,
  * and updating the game state.
  */
@@ -147,6 +158,7 @@ const apiService = {
   takeSquare,
   nextTurn,
   nextPlayerColor,
+  putBotInRoom,
   pollRoomState,
   stopPollRoomState,
   pollRooms,

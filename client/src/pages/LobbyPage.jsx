@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPage, setRoomState } from '../actions';
-import { Pages } from '../constants';
+import { MAX_PLAYERS, Pages } from '../constants';
 import Button from '../components/Button.jsx';
 import Fader from '../components/Fader.jsx';
 import FlexContainer from '../components/FlexContainer.jsx';
@@ -26,6 +26,7 @@ const LobbyPage = () => {
   const hostCanStartGame = isHost
     && roomState.players.length > 1
     && !playerColors.every(p => p === playerColors[0]);
+  const botCanBeAdded = roomState.players.length < MAX_PLAYERS;
 
   // Check room state while waiting.
   useEffect(() => {
@@ -67,14 +68,26 @@ const LobbyPage = () => {
     }
   };
 
-  // TODO: How to Play
+  /**
+   * Host adds a bot player.
+   */
+  const addBot = async () => {
+    if (!isHost) return;
+
+    try {
+      dispatch(setRoomState(await apiService.putBotInRoom()));
+    } catch (e) {
+      console.log(e);
+      alert(e);
+    }
+  };
 
   return (
     <Fader>
       <FlexContainer>
         <Text>{`You are in "${roomState.roomName}"`}</Text>
         <PlayerList />
-        {hostCanStartGame == false ? (
+        {isHost == false ? (
           <Text
             style={{
               margin: 15,
@@ -84,7 +97,19 @@ const LobbyPage = () => {
             The host can start the game after two or more players have joined, and more than one team color is selected.
           </Text>
         ) : (
-          <Button onClick={startGame}>Start game</Button>
+          <FlexContainer>
+            {botCanBeAdded == true && (
+              <Button
+                style={{
+                  padding: '5px 10px',
+                  backgroundColor: 'darkgrey',
+                }}
+                onClick={addBot}>
+                Add Bot
+              </Button>
+            )}
+            {hostCanStartGame == true && <Button onClick={startGame}>Start game</Button>}
+          </FlexContainer>
         )}
       </FlexContainer>
     </Fader>

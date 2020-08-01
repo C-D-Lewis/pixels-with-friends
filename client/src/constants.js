@@ -4,6 +4,9 @@ export const SQUARE_SIZE = 30;
 /** Turn time */
 export const TURN_TIME_MS = 15000;
 
+/** Max players. Bot names, player colors, etc. linked to this */
+export const MAX_PLAYERS = 8;
+
 /** Player colors */
 export const PlayerColors = [
   { name: 'blue',   light: '#2196F3', dark: '#1976D2' },
