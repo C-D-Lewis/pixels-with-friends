@@ -97,12 +97,13 @@ const nextTurn = async () => {
 /**
  * Set the player's color to the next one.
  *
+ * @param {string} name - Override player name if not the client's player.
  * @returns {Promise<Object>} Promise resolving to the room response.
  */
-const nextPlayerColor = async () => {
+const nextPlayerColor = async (name) => {
   const { roomName, playerName } = store.getState();
 
-  return request('PUT', `/rooms/${roomName}/players/${playerName}/nextColor`);
+  return request('PUT', `/rooms/${roomName}/players/${name || playerName}/nextColor`);
 };
 
 /**

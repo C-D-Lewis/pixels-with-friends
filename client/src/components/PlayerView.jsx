@@ -18,15 +18,25 @@ const PlayerColorBadge = ({ player }) => {
   const playerName = useSelector(state => state.playerName);
   const roomState = useSelector(state => state.roomState);
 
+  const isHost = !!roomState.players.find(p => p.playerName === playerName && p.isHost);
   const isMyTurn = player.playerName === roomState.currentPlayer && roomState.inGame;
 
   return (
     <div
       onClick={async () => {
-        if (page !== Pages.Lobby || playerName !== player.playerName) return;
+        if (page !== Pages.Lobby) return;
 
-        await apiService.nextPlayerColor();
-        audioService.play('take.mp3');
+        // Player can change their own team color
+        if (playerName === player.playerName) {
+          await apiService.nextPlayerColor();
+          audioService.play('take.mp3');
+        }
+
+        // Host can change bot colors
+        if (isHost) {
+          await apiService.nextPlayerColor(player.playerName);
+          audioService.play('take.mp3');
+        }
       }}
       style={{
         display: 'flex',
@@ -40,7 +50,7 @@ const PlayerColorBadge = ({ player }) => {
         border: isMyTurn ? '2px solid white' : '2px solid black',
       }}>
       {player.botData !== null && (
-        <img style={{ width: 20, height: 20 }} src="assets/images/robot.png"/>  
+        <img style={{ width: 20, height: 20 }} src="assets/images/robot.png"/>
       )}
     </div>
   );
