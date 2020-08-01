@@ -8,7 +8,7 @@ const {
   createPlayer,
   createBot,
   findSurroundedSquares,
-  findRuns,
+  findCompletedRuns,
   getSquareValue,
   goToNextPlayer,
 } = require('./util');
@@ -157,7 +157,7 @@ const handlePostRoomSquare = (req, res) => {
 
   // Find tiles surrounded for conversion
   findSurroundedSquares(room);
-  findRuns(room);
+  findCompletedRuns(room);
 
   // Winner?
   room.allSquaresFilled = grid

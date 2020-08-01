@@ -7,7 +7,7 @@ const RUN_LENGTH_MIN = 4;
 /** Chance a square is a double square */
 const DOUBLE_SQUARE_CHANCE = 10;
 /** Change to place defensively as an easy bot */
-const BOT_EASY_DEFENSIVE_CHANCE = 40;
+const BOT_EASY_DEFENSIVE_CHANCE = 99;
 
 /** Player colors - must sync */
 const PlayerColors = [
@@ -206,7 +206,7 @@ const findSurroundedSquares = (room) => {
  * @param {number} minLength - Minimum length to count.
  * @returns {Object} List of run grid locations, along with specified directions.
  */
-const findRunLocations = (grid, owner, y, x, dy, dx, minLength) => {
+const findRun = (grid, owner, y, x, dy, dx, minLength) => {
   const locations = [];
   let j = y; i = x;
 
@@ -219,7 +219,37 @@ const findRunLocations = (grid, owner, y, x, dy, dx, minLength) => {
 
   return (locations.length < minLength)
     ? null
-    : { locations, dx, dy };
+    : { x, y, locations, dx, dy, owner };
+};
+
+/**
+ * Find a run on the grid of a given length
+ *
+ * @param {Array[]} grid - List of grid rows.
+ * @param {number} minLength - Minimum length to count.
+ * @returns {Object} List of run grid locations, along with specified directions.
+ */
+const findRunOfLength = (grid, minLength) => {
+  for (let y = 0; y < GRID_SIZE; y++) {
+    for (let x = 0; x < GRID_SIZE; x++) {
+      const owner = grid[y][x].playerName;
+      if (!owner) continue;
+
+      // Try all of north, south, east, west until a run is found
+      let foundRun = findRun(grid, owner, y, x, -1, 0, minLength);
+      if (!foundRun) {
+        foundRun = findRun(grid, owner, y, x, 1, 0, minLength);
+      }
+      if (!foundRun) {
+        foundRun = findRun(grid, owner, y, x, 0, 1, minLength);
+      }
+      if (!foundRun) {
+        foundRun = findRun(grid, owner, y, x, 0, 1, minLength);
+      }
+
+      if (foundRun) return foundRun;
+    }
+  }
 };
 
 /**
@@ -227,40 +257,22 @@ const findRunLocations = (grid, owner, y, x, dy, dx, minLength) => {
  *
  * @param {Object} room - Room to search.
  */
-const findRuns = (room) => {
+const findCompletedRuns = (room) => {
   const { grid, players } = room;
 
-  for (let y = 0; y < GRID_SIZE; y++) {
-    for (let x = 0; x < GRID_SIZE; x++) {
-      const owner = grid[y][x].playerName;
-      if (!owner) continue;
+  const foundRun = findRunOfLength(grid, RUN_LENGTH_MIN);
+  if (foundRun) {
+    // Award points for each tile's value
+    const ownerPlayer = players.find(p => p.playerName === foundRun.owner);
+    foundRun.locations.forEach(([b, a]) => {
+      grid[b][a].inShape = true;
+      ownerPlayer.score += getSquareValue(grid[b][a].type);
+    });
 
-      // Try all of north, south, east, west until a run is found
-      let foundRun = findRunLocations(grid, owner, y, x, -1, 0, RUN_LENGTH_MIN);
-      if (!foundRun) {
-        foundRun = findRunLocations(grid, owner, y, x, 1, 0, RUN_LENGTH_MIN);
-      }
-      if (!foundRun) {
-        foundRun = findRunLocations(grid, owner, y, x, 0, 1, RUN_LENGTH_MIN);
-      }
-      if (!foundRun) {
-        foundRun = findRunLocations(grid, owner, y, x, 0, 1, RUN_LENGTH_MIN);
-      }
-
-      if (foundRun) {
-        // Award points for each tile's value
-        const ownerPlayer = players.find(p => p.playerName === owner);
-        foundRun.locations.forEach(([b, a]) => {
-          grid[b][a].inShape = true;
-          ownerPlayer.score += getSquareValue(grid[b][a].type);
-        });
-
-        // Remember stats
-        ownerPlayer.runs++;
-        if (foundRun.locations.length > ownerPlayer.bestRunLength) {
-          ownerPlayer.bestRunLength = foundRun.locations.length;
-        }
-      }
+    // Remember stats
+    ownerPlayer.runs++;
+    if (foundRun.locations.length > ownerPlayer.bestRunLength) {
+      ownerPlayer.bestRunLength = foundRun.locations.length;
     }
   }
 };
@@ -293,46 +305,26 @@ const findRandomMove = (grid, bot) => {
  */
 const findDefensiveMove = (grid, bot) => {
   // Cap off a run in progress
-  // FIXME - Refactor this logic and DRY with above
-  for (let y = 0; y < GRID_SIZE; y++) {
-    for (let x = 0; x < GRID_SIZE; x++) {
-      const owner = grid[y][x].playerName;
-      if (!owner) continue;
+  const minLength = RUN_LENGTH_MIN - 1;
+  const foundRun = findRunOfLength(grid, minLength);
+  if (foundRun) {
+    const { x, y, dx, dy } = foundRun;
+    console.log(`Bot ${bot.playerName} sees opportunity at ${x}:${y}`);
 
-      const minLength = RUN_LENGTH_MIN - 1;
-      let foundRun = findRunLocations(grid, owner, y, x, -1, 0, minLength);
-      if (!foundRun) {
-        foundRun = findRunLocations(grid, owner, y, x, 1, 0, minLength);
-      }
-      if (!foundRun) {
-        foundRun = findRunLocations(grid, owner, y, x, 0, 1, minLength);
-      }
-      if (!foundRun) {
-        foundRun = findRunLocations(grid, owner, y, x, 0, 1, minLength);
-      }
-      if (foundRun) {
-        console.log(`Bot ${bot.playerName} sees opportunity at ${x}:${y}`);
-
-        // Move is the next in the run sequence, but could be owned already
-        let runCap = {
-          x: x + (minLength * foundRun.dx),
-          y: y + (minLength * foundRun.dy),
-        };
-        if (grid[runCap.y][runCap.x].playerName) {
-          // Try the other end
-          runCap = {
-            x: x - foundRun.dx,
-            y: y - foundRun.dy,
-          };
-        }
-        if (!isInGrid(runCap.x, runCap.y) || grid[runCap.y][runCap.x].playerName) {
-          console.log(`Bot ${bot.playerName} would totally have capped that run`);
-          return findRandomMove(grid, bot);
-        }
-        return runCap;
-      }
+    // Move is the next in the run sequence, but could be owned already
+    let runCap = { x: x + (minLength * dx), y: y + (minLength * dy) };
+    if (grid[runCap.y][runCap.x].playerName) {
+      // Try the other end
+      runCap = { x: x - dx, y: y - dy };
     }
+    if (!isInGrid(runCap.x, runCap.y) || grid[runCap.y][runCap.x].playerName) {
+      console.log(`Bot ${bot.playerName} would totally have capped that run`);
+      return findRandomMove(grid, bot);
+    }
+    return runCap;
   }
+
+  // Or, defeat a takeover in progress
 
   // If we can't find any defensive moves, move randomly
   console.log(`Bot ${bot.playerName} grumbles about a lack of defensive moves`);
@@ -357,7 +349,7 @@ const emulateBotMove = (room, bot) => {
       console.log(`Bot ${bot.playerName} is taking it easy`);
 
       // Chance to play a defensive move
-      move = (randomInt(0, 100) > BOT_EASY_DEFENSIVE_CHANCE)
+      move = (randomInt(0, 100) < BOT_EASY_DEFENSIVE_CHANCE)
         ? findDefensiveMove(grid, bot)
         : findRandomMove(grid, bot);
       break;
@@ -414,7 +406,7 @@ module.exports = {
   createPlayer,
   createBot,
   findSurroundedSquares,
-  findRuns,
+  findCompletedRuns,
   getSquareValue,
   goToNextPlayer,
 };
