@@ -8,6 +8,8 @@ BUCKET=s3://pixels.chrislewis.me.uk
 
 node client/scripts/createConfig.js
 
+cd client && npm run build && cd -
+
 aws s3 mb $BUCKET
 aws s3 cp client/index.html $BUCKET
 aws s3 cp client/dist $BUCKET/dist --recursive
