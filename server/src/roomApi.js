@@ -10,7 +10,6 @@ const {
   findSurroundedSquares,
   findRuns,
   getSquareValue,
-  emulateBotMove,
   goToNextPlayer,
 } = require('./util');
 
@@ -280,6 +279,7 @@ const monitorPlayerLastSeen = () => {
       // If the room now has no human players, free it up
       if (room.players.length === 0 || room.players.every(p => p.botData)) {
         console.log(`Removing empty room ${room.roomName}`);
+        room.isDead = true;
         rooms.splice(rooms.indexOf(room), 1);
         return;
       }
