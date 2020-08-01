@@ -6,6 +6,7 @@ const {
   randomInt,
   createRoom,
   createPlayer,
+  createBot,
   findSurroundedSquares,
   findRuns,
   getSquareValue,
@@ -235,12 +236,39 @@ const handlePutRoomPlayerNextColor = (req, res) => {
   return res.status(200).json(room);
 };
 
-const handlePostRoomBot = (req, res) => {
+/**
+ * Handle PUT /room/:roomName/bot requests.
+ *
+ * @param {Object} req - Request object.
+ * @param {Object} res - Response object.
+ */
+const handlePutRoomBot = (req, res) => {
   const room = getRoomOrRespond(req, res);
-  const player = getPlayerOrRespond(req, res);
-  if (!room || !player) return;
+  if (!room) return;
 
   // Insert a player, type bot. Assign random friendly name and color.
+  const nextIndex = room.players.length;
+  const bot = createBot(nextIndex, room);
+  console.log(`Bot ${bot.playerName} joined ${room.roomName}`);
+
+  room.players.push(bot);
+  return res.status(200).json(room);
+};
+
+/**
+ * Handle PUT /room/:roomName/bot/:playerName/nextLevel requests.
+ * Cycles 1, 2, 3, 1, 2, 3...
+ *
+ * @param {Object} req - Request object.
+ * @param {Object} res - Response object.
+ */
+const handlePutRoomBotNextLevel = (req, res) => {
+  const room = getRoomOrRespond(req, res);
+  if (!room) return;
+  const player = getPlayerOrRespond(req, res);
+  if (!player) return;
+
+  console.log(player)
 };
 
 /**
@@ -251,7 +279,18 @@ const monitorPlayerLastSeen = () => {
     const now = Date.now();
 
     rooms.forEach((room) => {
+      // If the room now has no human players, free it up
+      if (room.players.length === 0 || room.players.every(p => p.botData)) {
+        console.log(`Removing empty room ${room.roomName}`);
+        rooms.splice(rooms.indexOf(room), 1);
+        return;
+      }
+
+      // Time out players who have closed the game
       room.players.forEach((player, index) => {
+        // Bots don't leave until all humans have
+        if (player.botData) return;
+
         // Players who didn't query roomState for a while get removed
         const diff = now - player.lastSeen;
         if (diff < PLAYER_LAST_SEEN_MAX_MS) return;
@@ -267,12 +306,6 @@ const monitorPlayerLastSeen = () => {
           room.currentPlayer = nextPlayer.playerName;
         }
       });
-
-      // If the room now has no players, free it up
-      if (room.players.length === 0) {
-        console.log(`Removing empty room ${room.roomName}`);
-        rooms.splice(rooms.indexOf(room), 1);
-      }
     });
   }, PLAYER_LAST_SEEN_INTERVAL_MS);
 };
@@ -286,6 +319,7 @@ module.exports = {
   handlePostRoomTestEndgame,
   handlePostRoomNextTurn,
   handlePutRoomPlayerNextColor,
-  handlePostRoomBot,
+  handlePutRoomBot,
+  handlePutRoomBotNextLevel,
   monitorPlayerLastSeen,
 };

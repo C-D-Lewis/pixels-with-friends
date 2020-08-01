@@ -25,6 +25,27 @@ const SquareTypes = {
   Double: 'double',
 };
 
+/** Bot names */
+const BotNames = [
+  'Buttons',
+  'Curious',
+  'Tinker',
+  'Twobit',
+  'Core',
+  'Scrap',
+  'Spark',
+  'Socket',
+];
+
+/**
+ * Get a random integer in a range.
+ *
+ * @param {number} min - Minimum value.
+ * @param {numberr} max - Maximum value to use, inclusive.
+ * @returns {number} The random integer.
+ */
+const randomInt = (min, max) => Math.round(Math.random() * (max - min)) + min;
+
 /**
  * Get a square's value by its type.
  *
@@ -79,12 +100,11 @@ const generateGrid = () => {
  *
  * @param {string} playerName - Player name as they chose.
  * @param {number} index - Player index.
- * @param {number} botLevel - Specified if a player is bot. Levels are 0 - 2 for easy, medium, hard.
  * @returns {Object} The player object.
  */
-const createPlayer = (playerName, index, botLevel) => ({
+const createPlayer = (playerName, index) => ({
   playerName,
-  botLevel,
+  botData: null,
   score: 0,
   lastSeen: Date.now(),
   color: PlayerColors[index].name,
@@ -93,6 +113,28 @@ const createPlayer = (playerName, index, botLevel) => ({
   runs: 0,
   bestRunLength: 0,
 });
+
+/**
+ * Create a Bot player object. Bots are like players, but smarter (tm).
+ * Bot levels are 1 - easy, 2 - medium, 3 - hard
+ *
+ * @param {number} index - Player index.
+ * @param {Object} room - Room the bot will play in.
+ * @returns {Object} The player object.
+ */
+const createBot = (index, room) => {
+  let botName = BotNames[randomInt(0, BotNames.length - 1)];
+  while(room.players.find(p => p.playerName === botName)) {
+    botName = BotNames[randomInt(0, BotNames.length - 1)];
+  }
+
+  const bot = createPlayer(botName, index);
+  bot.botData = {
+    level: 1,
+    trait: null,
+  }
+  return bot;
+};
 
 /**
  * Create a room object.
@@ -117,15 +159,6 @@ const createRoom = (roomName) => ({
  * @returns {boolean}
  */
 const isInGrid = (x, y) => x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE;
-
-/**
- * Get a random integer in a range.
- *
- * @param {number} min - Minimum value.
- * @param {numberr} max - Maximum value to use.
- * @returns {number} The random integer.
- */
-const randomInt = (min, max) => Math.round(Math.random() * (max - min)) + min;
 
 /**
  * Find instances where a player has surrounded another player's squares.
@@ -224,6 +257,7 @@ module.exports = {
   randomInt,
   createRoom,
   createPlayer,
+  createBot,
   findSurroundedSquares,
   findRuns,
   getSquareValue,
