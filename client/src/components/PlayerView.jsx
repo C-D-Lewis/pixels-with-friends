@@ -29,13 +29,20 @@ const PlayerColorBadge = ({ player }) => {
         audioService.play('take.mp3');
       }}
       style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         width: SQUARE_SIZE,
         height: SQUARE_SIZE,
         backgroundColor: PlayerColors.find(p => p.name === player.color).light,
         borderRadius: 5,
         marginRight: 10,
         border: isMyTurn ? '2px solid white' : '2px solid black',
-      }}/>
+      }}>
+      {player.botData !== null && (
+        <img style={{ width: 20, height: 20 }} src="assets/images/robot.png"/>  
+      )}
+    </div>
   );
 };
 
@@ -54,7 +61,6 @@ const PlayerView = ({ player, sortIndex }) => {
       <Text>{player.playerName}</Text>
       {page !== Pages.Lobby && <Text style={{ marginLeft: 20 }}>{`${player.score} points`}</Text>}
       {player.isHost == true && <Pill backgroundColor="rgb(234, 186, 0)">Host</Pill>}
-      {player.botData !== null && <Pill backgroundColor="darkgrey">CPU</Pill>}
     </FlexContainer>
   );
 };
