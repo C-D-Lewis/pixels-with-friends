@@ -10,6 +10,8 @@ const {
   findSurroundedSquares,
   findRuns,
   getSquareValue,
+  emulateBotMove,
+  goToNextPlayer,
 } = require('./util');
 
 /** Max players */
@@ -166,8 +168,7 @@ const handlePostRoomSquare = (req, res) => {
   }
 
   // Next player's turn - has to be done by name in case players drop out
-  const nextIndex = (players.indexOf(player) + 1) % players.length;
-  room.currentPlayer = players[nextIndex].playerName;
+  goToNextPlayer(room);
 
   // Respond with new roomState
   return res.status(200).json(room);
@@ -207,13 +208,10 @@ const handlePostRoomNextTurn = (req, res) => {
   const room = getRoomOrRespond(req, res);
   if (!room) return;
 
-  const { players } = room;
-  const currentPlayer = players.find(p => p.playerName === room.currentPlayer);
-  const nextIndex = (players.indexOf(currentPlayer) + 1) % players.length;
-  room.currentPlayer = players[nextIndex].playerName;
+  goToNextPlayer(room);
 
   // Respond with new roomState
-  return res.status(200).json(room);
+  res.status(200).json(room);
 };
 
 /**
@@ -300,10 +298,7 @@ const monitorPlayerLastSeen = () => {
 
         // If the player taking a turn leaves, move on to the next player
         if (room.currentPlayer === player.playerName) {
-          const nextPlayer = room.players[(index + 1) % room.players.length];
-          if (!nextPlayer) return;
-
-          room.currentPlayer = nextPlayer.playerName;
+          goToNextPlayer(room);
         }
       });
     });

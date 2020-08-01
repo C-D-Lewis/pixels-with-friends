@@ -82,6 +82,9 @@ const LobbyPage = () => {
     }
   };
 
+  // TODO - Change bot level
+  // TODO - Remove bot
+
   return (
     <Fader>
       <FlexContainer>

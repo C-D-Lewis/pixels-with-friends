@@ -2,7 +2,7 @@
 
 set -eu
 
-export AWS_PROFILE=personal_s3
+echo "Using aws profile $AWS_PROFILE"
 
 BUCKET=s3://pixels.chrislewis.me.uk
 
