@@ -45,7 +45,7 @@ const generateGridSquare = (row, col) => ({
   key: `${row}:${col}`,
   playerName: null,
   inShape: false,
-  type: SquareTypes.Single,  // TODO Randomise double tiles, other tyles...
+  type: SquareTypes.Single,
 });
 
 /**

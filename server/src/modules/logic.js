@@ -45,16 +45,18 @@ const findRun = (grid, owner, y, x, dy, dx, minLength) => {
 };
 
 /**
- * Find a run on the grid of a given length
+ * Find a run on the grid of a given length, from a given start position.
  *
  * @param {Array[]} grid - List of grid rows.
  * @param {number} minLength - Minimum length to count.
- * @param {string} findOwner - Optional owner to search for
+ * @param {string} [findOwner] - Optional owner to search for.
+ * @param {number} [startX] - Start x coordindate to search from. Used +1 to avoid repeats.
+ * @param {number} [startY] - Start y coordindate to search from.
  * @returns {Object} List of run grid locations, along with specified directions.
  */
-const findRunOfLength = (grid, minLength, findOwner) => {
-  for (let y = 0; y < GRID_SIZE; y++) {
-    for (let x = 0; x < GRID_SIZE; x++) {
+const findRunOfLength = (grid, minLength, findOwner, startX, startY) => {
+  for (let y = startY || 0; y < GRID_SIZE; y++) {
+    for (let x = (startX + 1) || 0; x < GRID_SIZE; x++) {
       const owner = grid[y][x].playerName;
       if (!owner) continue;
       if (findOwner && owner !== findOwner) continue;
@@ -80,24 +82,21 @@ const findRunOfLength = (grid, minLength, findOwner) => {
  * @returns {Object} { x, y } The random move to use.
  */
 const findRunCap = (grid, bot, minLength, owner) => {
-  const foundRun = findRunOfLength(grid, minLength, owner);
-  if (foundRun) {
+  let foundRun = findRunOfLength(grid, minLength, owner);
+  while (foundRun) {
     const { x, y, dx, dy } = foundRun;
     console.log(`Bot ${bot.playerName} sees opportunity at ${x}:${y}`);
 
     // Move is the next in the run sequence, but could be owned already
     let runCap = { x: x + (minLength * dx), y: y + (minLength * dy) };
-    if (!isInGrid(runCap.x, runCap.y) || grid[runCap.y][runCap.x].playerName) {
-      // Try the other end
-      runCap = { x: x - dx, y: y - dy };
-    }
+    if (isInGrid(runCap.x, runCap.y) && !grid[runCap.y][runCap.x].playerName) return runCap;
 
-    // FIXME - Gets stuck on the first already defeated run found
-    if (!isInGrid(runCap.x, runCap.y) || grid[runCap.y][runCap.x].playerName) {
-      console.log(`Bot ${bot.playerName} would totally have used that run`);
-      return;
-    }
-    return runCap;
+    // Try the other end
+    runCap = { x: x - dx, y: y - dy };
+    if (isInGrid(runCap.x, runCap.y) && !grid[runCap.y][runCap.x].playerName) return runCap;
+
+    console.log(`Bot ${bot.playerName} would totally have used that run`);
+    foundRun = findRunOfLength(grid, minLength, owner, x, y);
   }
 };
 
@@ -125,7 +124,7 @@ const findCapturedSquare = (grid) => {
       return { nOwner, owner, x, y };
     }
   }
-}
+};
 
 /**
  * Find instances where a player has surrounded another player's squares.
