@@ -13,7 +13,7 @@ const {
   handlePutRoomBot,
   handlePutRoomBotNextLevel,
   monitorPlayerLastSeen,
-} = require('./roomApi');
+} = require('./api');
 
 /** Port to use */
 const PORT = process.env.PORT || 5500;

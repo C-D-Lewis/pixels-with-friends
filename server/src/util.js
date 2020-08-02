@@ -1,49 +1,14 @@
-/** Size of the grid */
-const GRID_SIZE = 9;
-/** Basic score for a single square */
-const SCORE_AMOUNT_SINGLE = 10;
-/** Minimum run length */
-const RUN_LENGTH_MIN = 4;
-/** Chance a square is a double square */
-const DOUBLE_SQUARE_CHANCE = 10;
-/** Change to place defensively as an easy bot */
-const BOT_EASY_CHANCE = 10;
-/** Change to place defensively as a medium bot */
-const BOT_MEDIUM_CHANCE = 40;
-
-/** Player colors - must sync */
-const PlayerColors = [
-  { name: 'blue',   light: '#2196F3', dark: '#1976D2' },
-  { name: 'red',    light: '#F44336', dark: '#D32F2F' },
-  { name: 'green',  light: '#4CAF50', dark: '#388E3C' },
-  { name: 'yellow', light: '#FFEB3B', dark: '#FBC02D' },
-  { name: 'purple', light: '#9C27B0', dark: '#7B1FA2' },
-  { name: 'pink',   light: '#F06292', dark: '#EC407A' },
-  { name: 'orange', light: '#FF9800', dark: '#F57C00' },
-  { name: 'cyan',   light: '#00BCD4', dark: '#0097A7' },
-];
-
-/** Special square types - must sync */
-const SquareTypes = {
-  Single: 'single',
-  Double: 'double',
-};
-
-/** Bot names */
-const BotNames = [
-  'Buttons',
-  'Curious',
-  'Tinker',
-  'Twobit',
-  'Core',
-  'Scrap',
-  'Spark',
-  'Socket',
-  'Pins',
-  'Occular',
-  'Flash',
-  'Ratchet',
-];
+const {
+  GRID_SIZE,
+  SCORE_AMOUNT_SINGLE,
+  RUN_LENGTH_MIN,
+  DOUBLE_SQUARE_CHANCE,
+  BOT_EASY_CHANCE,
+  BOT_MEDIUM_CHANCE,
+  PlayerColors,
+  SquareTypes,
+  BotNames,
+} = require('./constants');
 
 /**
  * Get a random integer in a range.
@@ -160,6 +125,35 @@ const createRoom = (roomName) => ({
 });
 
 /**
+ * Helper to get the room. If not found, handle response.
+ *
+ * @param {Object} req - Request object.
+ * @returns {Object} Room if found, false otherwise.
+ */
+const getRoomOrRespond = (req, res, rooms) => {
+  const room = rooms.find(p => p.roomName === req.params.roomName);
+  if (!room) res.status(404).json({ error: 'Room not found' });
+
+  return room;
+};
+
+/**
+ * Helper to get the player.
+ *
+ * @param {Object} req - Request object.
+ * @returns {Object} Player if found.
+ */
+const getPlayerOrRespond = (req, res, rooms) => {
+  const room = getRoomOrRespond(req, res, rooms);
+  if (!room) return false;
+
+  const player = room.players.find(p => p.playerName === req.params.playerName);
+  if (!player) res.status(404).json({ error: 'Player not found' });
+
+  return player;
+};
+
+/**
  * Check a position is in the grid.
  *
  * @param {number} x - X coorindate.
@@ -173,7 +167,7 @@ const isInGrid = (x, y) => x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE;
  *
  * @param {Object} room - Room to search.
  */
-const findSurroundedSquares = (room) => {
+const awardCapturedSquares = (room) => {
   const { grid, players } = room;
 
   for (let y = 1; y < GRID_SIZE - 1; y++) {
@@ -216,13 +210,14 @@ const findRun = (grid, owner, y, x, dy, dx, minLength) => {
   const locations = [];
   let j = y; i = x;
 
-  // Find run length
+  // Find run on the grid, with an owner that matches the origin owner, not in a shape
   while (isInGrid(i, j) && grid[j][i].playerName && grid[j][i].playerName === owner && !grid[j][i].inShape) {
     locations.push([j, i]);
     j += dy;
     i += dx;
   }
 
+  // Must reach minLength to be valid
   return (locations.length < minLength)
     ? null
     : { x, y, locations, dx, dy, owner };
@@ -259,7 +254,7 @@ const findRunOfLength = (grid, minLength, findOwner) => {
  *
  * @param {Object} room - Room to search.
  */
-const findCompletedRuns = (room) => {
+const awardCompletedRuns = (room) => {
   const { grid, players } = room;
 
   const foundRun = findRunOfLength(grid, RUN_LENGTH_MIN);
@@ -439,8 +434,8 @@ const endTurn = (room) => {
   room.currentPlayer = players[nextIndex].playerName;
 
   // Find tiles surrounded for conversion
-  findSurroundedSquares(room);
-  findCompletedRuns(room);
+  awardCapturedSquares(room);
+  awardCompletedRuns(room);
 
   // Winner?
   room.allSquaresFilled = room.grid
@@ -463,8 +458,8 @@ module.exports = {
   createRoom,
   createPlayer,
   createBot,
-  findSurroundedSquares,
-  findCompletedRuns,
+  getRoomOrRespond,
+  getPlayerOrRespond,
   getSquareValue,
   endTurn,
 };
