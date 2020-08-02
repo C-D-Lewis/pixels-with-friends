@@ -9,6 +9,7 @@ const {
   SquareTypes,
   BotNames,
 } = require('./constants');
+const { rooms } = require('./data');
 
 /**
  * Get a random integer in a range.
@@ -130,7 +131,7 @@ const createRoom = (roomName) => ({
  * @param {Object} req - Request object.
  * @returns {Object} Room if found, false otherwise.
  */
-const getRoomOrRespond = (req, res, rooms) => {
+const getRoomOrRespond = (req, res) => {
   const room = rooms.find(p => p.roomName === req.params.roomName);
   if (!room) res.status(404).json({ error: 'Room not found' });
 
@@ -143,8 +144,8 @@ const getRoomOrRespond = (req, res, rooms) => {
  * @param {Object} req - Request object.
  * @returns {Object} Player if found.
  */
-const getPlayerOrRespond = (req, res, rooms) => {
-  const room = getRoomOrRespond(req, res, rooms);
+const getPlayerOrRespond = (req, res) => {
+  const room = getRoomOrRespond(req, res);
   if (!room) return false;
 
   const player = room.players.find(p => p.playerName === req.params.playerName);

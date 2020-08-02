@@ -17,9 +17,7 @@ const {
   getSquareValue,
   endTurn,
 } = require('./util');
-
-// All games stored only in memory - they are short lived
-const rooms = [];
+const { rooms } = require('./data');
 
 /**
  * Handle GET /rooms requests. A summary is returned
@@ -66,7 +64,7 @@ const handleGetRoom = (req, res) => {
  * @param {Object} res - Response object.
  */
 const handlePutRoomPlayer = (req, res) => {
-  const room = getRoomOrRespond(req, res, rooms);
+  const room = getRoomOrRespond(req, res);
   if (!room) return;
   if (room.players.length === MAX_PLAYERS) return res.status(409).json({ error: 'Room is full' });
 
@@ -95,7 +93,7 @@ const handlePutRoomPlayer = (req, res) => {
  * @param {Object} res - Response object.
  */
 const handlePutRoomInGame = (req, res) => {
-  const room = getRoomOrRespond(req, res, rooms);
+  const room = getRoomOrRespond(req, res);
   if (!room) return;
 
   // Set the game as in progress, clients poll for this
@@ -113,7 +111,7 @@ const handlePutRoomInGame = (req, res) => {
 const handlePostRoomSquare = (req, res) => {
   const { playerName, row, col } = req.body;
 
-  const room = getRoomOrRespond(req, res, rooms);
+  const room = getRoomOrRespond(req, res);
   if (!room) return;
   const player = room.players.find(p => p.playerName === playerName);
   if (!player) return res.status(404).json({ error: 'Player not found' });
@@ -138,7 +136,7 @@ const handlePostRoomSquare = (req, res) => {
  * @param {Object} res - Response object.
  */
 const handlePostRoomTestEndgame = (req, res) => {
-  const room = getRoomOrRespond(req, res, rooms);
+  const room = getRoomOrRespond(req, res);
   if (!room) return;
 
   for (let row = 0; row < GRID_SIZE; row++) {
@@ -162,7 +160,7 @@ const handlePostRoomTestEndgame = (req, res) => {
  * @param {Object} res - Response object.
  */
 const handlePostRoomNextTurn = (req, res) => {
-  const room = getRoomOrRespond(req, res, rooms);
+  const room = getRoomOrRespond(req, res);
   if (!room) return;
 
   endTurn(room);
@@ -178,9 +176,9 @@ const handlePostRoomNextTurn = (req, res) => {
  * @param {Object} res - Response object.
  */
 const handlePutRoomPlayerNextColor = (req, res) => {
-  const room = getRoomOrRespond(req, res, rooms);
+  const room = getRoomOrRespond(req, res);
   if (!room) return;
-  const player = getPlayerOrRespond(req, res, rooms);
+  const player = getPlayerOrRespond(req, res);
   if (!player) return;
 
   const currentColor = PlayerColors.find(p => p.name === player.color);
@@ -198,7 +196,7 @@ const handlePutRoomPlayerNextColor = (req, res) => {
  * @param {Object} res - Response object.
  */
 const handlePutRoomBot = (req, res) => {
-  const room = getRoomOrRespond(req, res, rooms);
+  const room = getRoomOrRespond(req, res);
   if (!room) return;
 
   // Insert a player, type bot. Assign random friendly name and color.
@@ -218,9 +216,9 @@ const handlePutRoomBot = (req, res) => {
  * @param {Object} res - Response object.
  */
 const handlePutRoomBotNextLevel = (req, res) => {
-  const room = getRoomOrRespond(req, res, rooms);
+  const room = getRoomOrRespond(req, res);
   if (!room) return;
-  const bot = getPlayerOrRespond(req, res, rooms);
+  const bot = getPlayerOrRespond(req, res);
   if (!bot) return;
 
   bot.botData.level = (bot.botData.level + 1) % NUM_BOT_LEVELS;
