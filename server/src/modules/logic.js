@@ -102,13 +102,12 @@ const findRunCap = (grid, bot, minLength, owner) => {
 };
 
 /**
- * Find instances where a player has surrounded another player's squares.
+ * Find a square poised to be captured, but not yet changed.
  *
- * @param {Object} room - Room to search.
+ * @param {Object[]} grid - Room's grid of squares.
+ * @returns {Object} Data about the capture, else undefined.
  */
-const awardCapturedSquares = (room) => {
-  const { grid, players } = room;
-
+const findCapturedSquare = (grid) => {
   for (let y = 1; y < GRID_SIZE - 1; y++) {
     for (let x = 1; x < GRID_SIZE - 1; x++) {
       const owner = grid[y][x].playerName;
@@ -123,13 +122,32 @@ const awardCapturedSquares = (room) => {
       const neighbors = [nOwner, sOwner, eOwner, wOwner];
       if (!nOwner || !neighbors.every(p => p === nOwner) || nOwner === owner) continue;
 
-      // Surrounding player takes over
-      console.log(`Player ${nOwner} claimed square ${x}:${y} from ${owner}`);
-      grid[y][x].playerName = nOwner;
-      const nOwnerPlayer = players.find(p => p.playerName === nOwner);
-      nOwnerPlayer.score += 5 * getSquareValue(grid[y][x].type);
-      nOwnerPlayer.conversions++;
+      return { nOwner, owner, x, y };
     }
+  }
+}
+
+/**
+ * Find instances where a player has surrounded another player's squares.
+ *
+ * @param {Object} room - Room to search.
+ */
+const awardCapturedSquares = (room) => {
+  const { grid, players } = room;
+
+  let captured = findCapturedSquare(grid);
+  while (captured) {
+    const { x, y, nOwner, owner } = captured;
+
+    // Surrounding player takes over
+    console.log(`Player ${nOwner} claimed square ${x}:${y} from ${owner}`);
+    grid[y][x].playerName = nOwner;
+    const nOwnerPlayer = players.find(p => p.playerName === nOwner);
+    nOwnerPlayer.score += 5 * getSquareValue(grid[y][x].type);
+    nOwnerPlayer.conversions++;
+
+    // There could be more
+    captured = findCapturedSquare(grid);
   }
 };
 
