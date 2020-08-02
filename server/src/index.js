@@ -1,19 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { enablePreflight, printRequest } = require('./modules/middleware');
-const {
-  handleGetRooms,
-  handleGetRoom,
-  handlePutRoomPlayer,
-  handlePutRoomInGame,
-  handlePostRoomSquare,
-  handlePostRoomTestEndgame,
-  handlePostRoomNextTurn,
-  handlePutRoomPlayerNextColor,
-  handlePutRoomBot,
-  handlePutRoomBotNextLevel,
-  monitorPlayerLastSeen,
-} = require('./modules/api');
+const handleGetRooms = require('./api/handleGetRooms');
+const handleGetRoom = require('./api/handleGetRoom');
+const handlePutRoomPlayer = require('./api/handlePutRoomPlayer');
+const handlePutRoomInGame = require('./api/handlePutRoomInGame');
+const handlePostRoomSquare = require('./api/handlePostRoomSquare');
+const handlePostRoomTestEndgame = require('./api/handlePostRoomTestEndgame');
+const handlePostRoomNextTurn = require('./api/handlePostRoomNextTurn');
+const handlePutRoomPlayerNextColor = require('./api/handlePutRoomPlayerNextColor');
+const handlePutRoomBot = require('./api/handlePutRoomBot');
+const handlePutRoomBotNextLevel = require('./api/handlePutRoomBotNextLevel');
+const { monitorPlayerLastSeen } = require('./modules/api');
 
 /** Port to use */
 const PORT = process.env.PORT || 5500;
