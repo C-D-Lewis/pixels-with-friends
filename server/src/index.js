@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { enablePreflight, printRequest } = require('./middleware');
+const { enablePreflight, printRequest } = require('./modules/middleware');
 const {
   handleGetRooms,
   handleGetRoom,
@@ -13,7 +13,7 @@ const {
   handlePutRoomBot,
   handlePutRoomBotNextLevel,
   monitorPlayerLastSeen,
-} = require('./api');
+} = require('./modules/api');
 
 /** Port to use */
 const PORT = process.env.PORT || 5500;

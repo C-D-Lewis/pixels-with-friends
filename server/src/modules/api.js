@@ -6,7 +6,7 @@ const {
   PLAYER_LAST_SEEN_MAX_MS,
   NUM_BOT_LEVELS,
   PlayerColors,
-} = require('./constants');
+} = require('../constants');
 const {
   randomInt,
   createRoom,
@@ -16,7 +16,7 @@ const {
   getPlayerOrRespond,
   getSquareValue,
   endTurn,
-} = require('./util');
+} = require('../util');
 const { rooms } = require('./data');
 
 /**

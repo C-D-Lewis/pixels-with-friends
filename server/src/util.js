@@ -9,7 +9,7 @@ const {
   SquareTypes,
   BotNames,
 } = require('./constants');
-const { rooms } = require('./data');
+const { rooms } = require('./modules/data');
 
 /**
  * Get a random integer in a range.
