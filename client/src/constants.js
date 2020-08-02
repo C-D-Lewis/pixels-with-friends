@@ -1,8 +1,10 @@
+const { getQueryParam } = require('./util');
+
 /** Size of a grid square */
 export const SQUARE_SIZE = 30;
 
 /** Turn time */
-export const TURN_TIME_MS = 15000;
+export const TURN_TIME_MS = getQueryParam('turnTime') || 15000;
 
 /** Max players. Bot names, player colors, etc. linked to this */
 export const MAX_PLAYERS = 8;

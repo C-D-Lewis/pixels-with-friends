@@ -312,6 +312,9 @@ const endTurn = (room) => {
     .every(row => row.every(square => !!square.playerName), false);
   if (room.allSquaresFilled) {
     room.inGame = false;
+
+    // No more moves
+    return;
   }
 
   // If next player is a bot, emulate thinking time, then take a turn
