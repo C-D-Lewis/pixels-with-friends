@@ -1,4 +1,5 @@
-const { getRoomOrRespond, getSquareValue, endTurn } = require('../util');
+const { getRoomOrRespond, getSquareValue } = require('../util');
+const { endTurn } = require('../modules/logic');
 
 /**
  * Handle POST /room/:roomName/square requests.

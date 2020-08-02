@@ -1,5 +1,5 @@
 const { PLAYER_LAST_SEEN_INTERVAL_MS, PLAYER_LAST_SEEN_MAX_MS } = require('../constants');
-const { endTurn } = require('../util');
+const { endTurn } = require('./logic');
 const { rooms } = require('./data');
 
 /**
@@ -32,7 +32,7 @@ const updateRooms = () => {
       if (room.currentPlayer === player.playerName) endTurn(room);
     });
   });
-}
+};
 
 /**
  * Monitor players for their pings and remove those not seen for a while.

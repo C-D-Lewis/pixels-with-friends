@@ -1,4 +1,5 @@
-const { getRoomOrRespond, endTurn } = require('../util');
+const { getRoomOrRespond } = require('../util');
+const { endTurn } = require('../modules/logic');
 
 /**
  * Handle POST /room/:roomName/nextTurn requests.
