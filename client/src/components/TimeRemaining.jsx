@@ -47,7 +47,7 @@ const TimeRemaining = () => {
 
   // When time's up, signal next player's turn
   useEffect(() => {
-    if (timeRemaining < TIMER_INTERVAL_MS && myTurn) {
+    if ((timeRemaining < TIMER_INTERVAL_MS) && myTurn) {
       apiService.nextTurn();
       return;
     }
