@@ -10,7 +10,7 @@ const {
   findSurroundedSquares,
   findCompletedRuns,
   getSquareValue,
-  goToNextPlayer,
+  endTurn,
 } = require('./util');
 
 /** Max players */
@@ -158,7 +158,7 @@ const handlePostRoomSquare = (req, res) => {
   console.log(`Player ${playerName} placed at ${col}:${row}`);
 
   // Next player's turn - has to be done by name in case players drop out
-  goToNextPlayer(room);
+  endTurn(room);
 
   // Respond with new roomState
   return res.status(200).json(room);
@@ -198,7 +198,7 @@ const handlePostRoomNextTurn = (req, res) => {
   const room = getRoomOrRespond(req, res);
   if (!room) return;
 
-  goToNextPlayer(room);
+  endTurn(room);
 
   // Respond with new roomState
   res.status(200).json(room);
@@ -291,7 +291,7 @@ const monitorPlayerLastSeen = () => {
 
         // If the player taking a turn leaves, move on to the next player
         if (room.currentPlayer === player.playerName) {
-          goToNextPlayer(room);
+          endTurn(room);
         }
       });
     });
