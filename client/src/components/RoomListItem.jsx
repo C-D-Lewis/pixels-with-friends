@@ -49,7 +49,7 @@ const RoomListItem = ({ room }) => {
         style={{
           fontSize: '0.9rem',
           marginLeft: 10,
-          padding: '6px 7px',
+          padding: '8px 9px',
         }}>
         Join
       </Button>

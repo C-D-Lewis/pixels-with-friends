@@ -37,7 +37,7 @@ const updateRooms = () => {
 /**
  * Monitor players for their pings and remove those not seen for a while.
  */
-const monitorPlayerLastSeen = () => setInterval(() => updateRooms, PLAYER_LAST_SEEN_INTERVAL_MS);
+const monitorPlayerLastSeen = () => setInterval(updateRooms, PLAYER_LAST_SEEN_INTERVAL_MS);
 
 module.exports = {
   monitorPlayerLastSeen,

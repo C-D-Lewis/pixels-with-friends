@@ -93,7 +93,7 @@ const LandingPage = () => {
               disabled={!readyToJoin}
               style={{ marginTop: 10 }}
               onClick={() => enterRoom(roomName)}>
-              Join room
+              Create room
             </Button>
           </FlexContainer>
         </Card>

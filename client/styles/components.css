@@ -1,5 +1,5 @@
 .button:hover {
-  color: #fff !important;
+  filter: brightness(0.8); !important;
 }
 
 .grid-square:hover {

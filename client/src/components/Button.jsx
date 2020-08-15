@@ -12,7 +12,7 @@ const Button = ({ children, disabled = false, onClick, style }) => (
     className="button"
     style={{
       fontSize: '1.2rem',
-      color: '#ddd',
+      color: 'white',
       backgroundColor: !disabled ? PlayerColors.find(p => p.name === 'green').dark : '#ccc',
       margin: '10px 0px',
       padding: '10px 15px',
