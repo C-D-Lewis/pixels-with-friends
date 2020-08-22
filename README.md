@@ -12,7 +12,8 @@ and place tiles. See `server/src/index.js` for APIs available.
 
 It can be started on port `5500` as follows:
 
-```
+```bash
+cd server
 npm ci
 
 npm start
@@ -23,7 +24,7 @@ npm start
 The client is a React-based app with pages for each stage - lobby, in game, and
 game end. It can be built as follows:
 
-```
+```bash
 cd client
 
 # Set configuration to point to game server
