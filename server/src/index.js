@@ -26,7 +26,7 @@ const main = () => {
   // app.use(printRequest);
 
   // EC2 healthcheck
-  api.get('/', (req, res) => res.status(200).send('ok'));
+  app.get('/', (req, res) => res.status(200).send('ok'));
 
   app.get('/rooms', handleGetRooms);
   app.get('/rooms/:roomName', handleGetRoom);
