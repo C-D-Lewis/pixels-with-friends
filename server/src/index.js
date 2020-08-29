@@ -25,6 +25,9 @@ const main = () => {
   app.use(enablePreflight);
   // app.use(printRequest);
 
+  // EC2 healthcheck
+  api.get('/', (req, res) => res.status(200).send('ok'));
+
   app.get('/rooms', handleGetRooms);
   app.get('/rooms/:roomName', handleGetRoom);
   app.put('/rooms/:roomName/player', handlePutRoomPlayer);
