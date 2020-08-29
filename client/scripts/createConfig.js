@@ -1,6 +1,7 @@
 const { writeFileSync } = require('fs');
 
 const {
+  /** Server URL, including protocol */
   SERVER_URL,
 } = process.env;
 
