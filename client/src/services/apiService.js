@@ -18,7 +18,7 @@ let pollRoomsHandle;
  */
 const request = async (method, path, json) => {
   const { serverUrl } = store.getState();
-  const res = await fetch(`${serverUrl}:5500${path}`, {
+  const res = await fetch(`${serverUrl}${path}`, {
     method,
     headers: { 'Content-Type': 'application/json' },
     ...{ body: json ? JSON.stringify(json): null },
