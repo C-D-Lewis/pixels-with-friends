@@ -18,6 +18,7 @@ const handlePostRoomSquare = (req, res) => {
   // Set ownership and aware points - client validates it is a free square
   const { grid, players } = room;
   grid[row][col].playerName = playerName;
+  grid[row][col].color = player.color;
   player.score += getSquareValue(grid[row][col].type);
   console.log(`Player ${playerName} placed at ${col}:${row}`);
 

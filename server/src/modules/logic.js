@@ -19,7 +19,7 @@ const isInGrid = (x, y) => x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE;
  * Find a run on the grid using movement deltas to govern direction.
  *
  * @param {Array[]} grid - List of grid rows.
- * @param {string} owner - Owner of the run start.
+ * @param {string} color - Color of the run start.
  * @param {number} y - Starting Y coorindate.
  * @param {number} x - Starting X coorindate.
  * @param {number} dy - Y delta.
@@ -27,12 +27,17 @@ const isInGrid = (x, y) => x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE;
  * @param {number} minLength - Minimum length to count.
  * @returns {Object} List of run grid locations, along with specified directions.
  */
-const findRun = (grid, owner, y, x, dy, dx, minLength) => {
+const findRun = (grid, color, y, x, dy, dx, minLength) => {
   const locations = [];
   let j = y; i = x;
 
-  // Find run on the grid, with an owner that matches the origin owner, not in a shape
-  while (isInGrid(i, j) && grid[j][i].playerName && grid[j][i].playerName === owner && !grid[j][i].inShape) {
+  // Find run on the grid, with a color that matches the origin color, not in a shape
+  while (
+    isInGrid(i, j) &&
+    grid[j][i].playerName &&
+    grid[j][i].color === color &&
+    !grid[j][i].inShape
+  ) {
     locations.push([j, i]);
     j += dy;
     i += dx;
@@ -41,7 +46,7 @@ const findRun = (grid, owner, y, x, dy, dx, minLength) => {
   // Must reach minLength to be valid
   return (locations.length < minLength)
     ? null
-    : { x, y, locations, dx, dy, owner };
+    : { x, y, locations, dx, dy };
 };
 
 /**
@@ -49,23 +54,23 @@ const findRun = (grid, owner, y, x, dy, dx, minLength) => {
  *
  * @param {Array[]} grid - List of grid rows.
  * @param {number} minLength - Minimum length to count.
- * @param {string} [findOwner] - Optional owner to search for.
+ * @param {string} [findColor] - Optional color to search for.
  * @param {number} [startX] - Start x coordindate to search from. Used +1 to avoid repeats.
  * @param {number} [startY] - Start y coordindate to search from.
  * @returns {Object} List of run grid locations, along with specified directions.
  */
-const findRunOfLength = (grid, minLength, findOwner, startX, startY) => {
+const findRunOfLength = (grid, minLength, findColor, startX, startY) => {
   for (let y = startY || 0; y < GRID_SIZE; y++) {
     for (let x = (startX + 1) || 0; x < GRID_SIZE; x++) {
-      const owner = grid[y][x].playerName;
-      if (!owner) continue;
-      if (findOwner && owner !== findOwner) continue;
+      const color = grid[y][x].color;
+      if (!color) continue;
+      if (findColor && color !== findColor) continue;
 
       // Try all of north, south, east, west until a run is found
-      const foundRun = findRun(grid, owner, y, x, -1, 0, minLength)
-        || findRun(grid, owner, y, x, 1, 0, minLength)
-        || findRun(grid, owner, y, x, 0, 1, minLength)
-        || findRun(grid, owner, y, x, 0, 1, minLength);
+      const foundRun = findRun(grid, color, y, x, -1, 0, minLength)
+        || findRun(grid, color, y, x, 1, 0, minLength)
+        || findRun(grid, color, y, x, 0, 1, minLength)
+        || findRun(grid, color, y, x, 0, 1, minLength);
 
       if (foundRun) return foundRun;
     }
@@ -78,11 +83,11 @@ const findRunOfLength = (grid, minLength, findOwner, startX, startY) => {
  * @param {Object[]} grid - Room's grid of squares.
  * @param {Object} bot - Bot player taking their turn.
  * @param {number} minLength - Minimum run length to find.
- * @param {string} owner - Optional run owner to search for.
+ * @param {string} [color] - Optional run color to search for.
  * @returns {Object} { x, y } The random move to use.
  */
-const findRunCap = (grid, bot, minLength, owner) => {
-  let foundRun = findRunOfLength(grid, minLength, owner);
+const findRunCap = (grid, bot, minLength, color) => {
+  let foundRun = findRunOfLength(grid, minLength, color);
   while (foundRun) {
     const { x, y, dx, dy } = foundRun;
     console.log(`Bot ${bot.playerName} sees opportunity at ${x}:${y}`);
@@ -96,7 +101,7 @@ const findRunCap = (grid, bot, minLength, owner) => {
     if (isInGrid(runCap.x, runCap.y) && !grid[runCap.y][runCap.x].playerName) return runCap;
 
     console.log(`Bot ${bot.playerName} would totally have used that run`);
-    foundRun = findRunOfLength(grid, minLength, owner, x, y);
+    foundRun = findRunOfLength(grid, minLength, color, x, y);
   }
 };
 
@@ -109,19 +114,19 @@ const findRunCap = (grid, bot, minLength, owner) => {
 const findCapturedSquare = (grid) => {
   for (let y = 1; y < GRID_SIZE - 1; y++) {
     for (let x = 1; x < GRID_SIZE - 1; x++) {
-      const owner = grid[y][x].playerName;
-      if (!owner) continue;
+      const ownerColor = grid[y][x].color;
+      if (!ownerColor) continue;
 
-      const nOwner = grid[y - 1][x].playerName && grid[y - 1][x].playerName;
-      const sOwner = grid[y + 1][x].playerName && grid[y + 1][x].playerName;
-      const eOwner = grid[y][x + 1].playerName && grid[y][x + 1].playerName;
-      const wOwner = grid[y][x - 1].playerName && grid[y][x - 1].playerName;
+      const nColor = grid[y - 1][x].color;
+      const sColor = grid[y + 1][x].color;
+      const eColor = grid[y][x + 1].color;
+      const wColor = grid[y][x - 1].color;
+      const neighbors = [nColor, sColor, eColor, wColor];
 
-      // If all cardinal owners are the same, and not the owner
-      const neighbors = [nOwner, sOwner, eOwner, wOwner];
-      if (!nOwner || !neighbors.every(p => p === nOwner) || nOwner === owner) continue;
+      // If all cardinal owners are the same, and not the owner, it's captured
+      if (!nColor || !neighbors.every(p => p === nColor) || nColor === ownerColor) continue;
 
-      return { nOwner, owner, x, y };
+      return { nColor, x, y };
     }
   }
 };
@@ -132,18 +137,20 @@ const findCapturedSquare = (grid) => {
  * @param {Object} room - Room to search.
  */
 const awardCapturedSquares = (room) => {
-  const { grid, players } = room;
+  const { grid, players, currentPlayer } = room;
 
   let captured = findCapturedSquare(grid);
   while (captured) {
-    const { x, y, nOwner, owner } = captured;
+    const { x, y, nColor } = captured;
 
-    // Surrounding player takes over
-    console.log(`Player ${nOwner} claimed square ${x}:${y} from ${owner}`);
-    grid[y][x].playerName = nOwner;
-    const nOwnerPlayer = players.find(p => p.playerName === nOwner);
-    nOwnerPlayer.score += 5 * getSquareValue(grid[y][x].type);
-    nOwnerPlayer.conversions++;
+    // Surrounding player (always the current player) takes over
+    const owner = grid[y][x].playerName;
+    console.log(`Player ${currentPlayer} claimed square ${x}:${y} from ${owner}`);
+    grid[y][x].playerName = currentPlayer;
+    grid[y][x].color = nColor;
+    const newOwnerPlayer = players.find(p => p.playerName === currentPlayer);
+    newOwnerPlayer.score += 5 * getSquareValue(grid[y][x].type);
+    newOwnerPlayer.conversions++;
 
     // There could be more
     captured = findCapturedSquare(grid);
@@ -160,18 +167,18 @@ const awardCompletedRuns = (room) => {
 
   const foundRun = findRunOfLength(grid, RUN_LENGTH_MIN);
   if (foundRun) {
-    // Award points for each tile's value
-    const ownerPlayer = players.find(p => p.playerName === foundRun.owner);
-    foundRun.locations.forEach(([b, a]) => {
-      grid[b][a].inShape = true;
-      ownerPlayer.score += getSquareValue(grid[b][a].type);
-    });
+    foundRun.locations.forEach(([y, x]) => {
+      // Award points for each tile's value
+      const ownerPlayer = players.find(p => p.playerName === grid[y][x].playerName);
+      grid[y][x].inShape = true;
+      ownerPlayer.score += getSquareValue(grid[y][x].type);
 
-    // Remember stats
-    ownerPlayer.runs++;
-    if (foundRun.locations.length > ownerPlayer.bestRunLength) {
-      ownerPlayer.bestRunLength = foundRun.locations.length;
-    }
+      // Remember stats
+      ownerPlayer.runs++;
+      if (foundRun.locations.length > ownerPlayer.bestRunLength) {
+        ownerPlayer.bestRunLength = foundRun.locations.length;
+      }
+    });
   }
 };
 
@@ -223,7 +230,7 @@ const findDefensiveMove = (grid, bot) => {
  */
 const findOffensiveMove = (grid, bot) => {
   // Find a run in progress by this bot
-  let move = findRunCap(grid, bot, 1, bot.playerName);
+  let move = findRunCap(grid, bot, 1, bot.color);
   if (move) return move;
 
   // TODO Or, begin a takeover of a completely unsurrounded square
@@ -284,6 +291,7 @@ const emulateBotMove = (room, bot) => {
   // Apply the move
   console.log(`Bot ${bot.playerName} placed at ${move.x}:${move.y}`);
   grid[move.y][move.x].playerName = bot.playerName;
+  grid[move.y][move.x].color = bot.color;
   bot.score += getSquareValue(grid[move.y][move.x].type);
 
   // Next turn
@@ -299,13 +307,13 @@ const endTurn = (room) => {
   const { players, isDead } = room;
   if (isDead) return;
 
-  // Find the next player in the list
-  const nextIndex = (players.findIndex(p => p.playerName === room.currentPlayer) + 1) % players.length;
-  room.currentPlayer = players[nextIndex].playerName;
-
   // Find tiles surrounded for conversion
   awardCapturedSquares(room);
   awardCompletedRuns(room);
+
+  // Find the next player in the list - must happen after logic that uses currentPlayer
+  const nextIndex = (players.findIndex(p => p.playerName === room.currentPlayer) + 1) % players.length;
+  room.currentPlayer = players[nextIndex].playerName;
 
   // Winner?
   room.allSquaresFilled = room.grid
@@ -325,8 +333,5 @@ const endTurn = (room) => {
 };
 
 module.exports = {
-  awardCompletedRuns,
-  awardCapturedSquares,
   endTurn,
-  emulateBotMove,
 };

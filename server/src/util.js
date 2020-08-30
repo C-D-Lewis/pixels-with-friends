@@ -44,6 +44,7 @@ const getSquareValue = (type) => {
 const generateGridSquare = (row, col) => ({
   key: `${row}:${col}`,
   playerName: null,
+  color: null,
   inShape: false,
   type: SquareTypes.Single,
 });

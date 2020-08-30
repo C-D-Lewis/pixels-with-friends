@@ -14,7 +14,9 @@ const handlePostRoomTestEndgame = (req, res) => {
   for (let row = 0; row < GRID_SIZE; row++) {
     for (let col = 0; col < GRID_SIZE; col++) {
       const playerIndex = randomInt(0, room.players.length - 1);
-      room.grid[row][col].playerName = room.players[playerIndex].playerName;
+      const player = room.players[playerIndex];
+      room.grid[row][col].playerName = player.playerName;
+      room.grid[row][col].color = player.color;
     }
   }
 
