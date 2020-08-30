@@ -7,7 +7,7 @@ echo "Server is at $SERVER_URL"
 
 COMMIT=$(git rev-parse --short HEAD)
 BUCKET=s3://pixels.chrislewis.me.uk
-CF_DIST_ID=E18GYL9VCU3IK5
+PROJECT_NAME=pixels-with-friends
 
 # Deploy infrastructure
 cd terraform
@@ -28,6 +28,7 @@ rm config.js
 cd -
 
 # CloudFront invalidation
+CF_DIST_ID=$(aws cloudfront list-distributions | jq -r '.DistributionList.Items[] | select(.Aliases.Items[0] == "pixels.chrislewis.me.uk") | .Id')
 RES=$(aws cloudfront create-invalidation --distribution-id $CF_DIST_ID --paths "/*")
 INVALIDATION_ID=$(echo $RES | jq -r '.Invalidation.Id')
 echo "Waiting for invalidation-completed for $INVALIDATION_ID..."
