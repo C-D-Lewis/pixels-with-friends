@@ -1,6 +1,5 @@
 module "main" {
   source       = "./infrastructure"
-  server_url   = var.server_url
   region       = var.region
   project_name = var.project_name
 }
