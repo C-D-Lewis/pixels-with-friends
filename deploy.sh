@@ -15,6 +15,10 @@ terraform init
 terraform apply
 cd -
 
+# Deploy server container image
+./pipeline/build-server.sh $COMMIT
+# Push to ECR
+
 # Update client code
 cd client
 node scripts/createConfig.js

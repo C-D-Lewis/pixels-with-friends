@@ -9,3 +9,9 @@ variable "project_name" {
   description = "Project name for all resources"
   default     = "pixels-with-friends"
 }
+
+variable "vpc_id" {
+  type        = string
+  description = "VPC to deploy into"
+  default     = "vpc-c3b70bb9"
+}

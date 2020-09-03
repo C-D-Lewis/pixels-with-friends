@@ -39,6 +39,11 @@ npm run build
 python3 -m http.server
 ```
 
+## Deployment
+
+TODO: Terraform deployment and pipeline
+
+
 ## Bugs
 
 - Players rejoin get tiles back, but not score

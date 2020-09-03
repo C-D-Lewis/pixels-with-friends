@@ -2,6 +2,7 @@ module "main" {
   source       = "./infrastructure"
   region       = var.region
   project_name = var.project_name
+  vpc_id       = var.vpc_id
 }
 
 provider "aws" {
