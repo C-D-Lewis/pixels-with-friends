@@ -8,4 +8,6 @@ RUN npm ci
 
 ADD . /server/
 
+EXPOSE 5500
+
 ENTRYPOINT ["npm", "start"]
