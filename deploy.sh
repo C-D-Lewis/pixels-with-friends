@@ -7,17 +7,23 @@ echo "Server is at $SERVER_URL"
 
 COMMIT=$(git rev-parse --short HEAD)
 BUCKET=s3://pixels.chrislewis.me.uk
-PROJECT_NAME=pixels-with-friends
+ECR_NAME=pixels-with-friends-server-ecr
+IMAGE_NAME=pixels-with-friends
 
 # Deploy infrastructure
-cd terraform
-terraform init
-terraform apply
-cd -
+export AWS_DEFAULT_REGION=us-east-1
+./pipeline/deploy-infra.sh
 
 # Deploy server container image
-./pipeline/build-server.sh $COMMIT
+./pipeline/build-server.sh $IMAGE_NAME $COMMIT
+
 # Push to ECR
+$(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+RES=$(aws ecr describe-repositories --repository-names $ECR_NAME)
+ECR_URI="$(echo $RES | jq -r '.repositories[0].repositoryUri')"
+./pipeline/push-server.sh $IMAGE_NAME $ECR_URI $COMMIT
+
+exit 0
 
 # Update client code
 cd client

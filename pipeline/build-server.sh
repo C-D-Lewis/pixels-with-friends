@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -eu
 
-COMMIT=${1:-"$(git rev-parse --short HEAD)"}
+IMAGE_NAME=$1
+COMMIT=$2
 
 cd server
-docker build . -t "pwf-server:$COMMIT"
+docker build . -t "$IMAGE_NAME:$COMMIT"
