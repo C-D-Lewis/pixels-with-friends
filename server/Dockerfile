@@ -1,12 +1,12 @@
-FROM node:12
+FROM node:12-alpine
 
-WORKDIR /server
+WORKDIR /app
 
-ADD package* /server/
+ADD package* /app/
 
 RUN npm ci
 
-ADD . /server/
+ADD . /app/
 
 EXPOSE 5500
 

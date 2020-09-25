@@ -1,8 +1,8 @@
 #!/bin/bash
 
-ser -eu
+set -eu
 
-COMMIT=$1
+COMMIT=${1:-"$(git rev-parse --short HEAD)"}
 
 cd server
 docker build . -t "pwf-server:$COMMIT"
