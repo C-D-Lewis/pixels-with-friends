@@ -3,12 +3,12 @@
 set -eu
 
 COMMIT=$(git rev-parse --short HEAD)
-BUCKET=s3://pixels-with-friends-client
+BUCKET=s3://pixels.chrislewis.me.uk
 PROJECT_NAME=pixels-with-friends
 ECR_NAME=$PROJECT_NAME-server-ecr
 SITE_URL=pixels.chrislewis.me.uk
 
-export SERVER_URL=$PROJECT_NAME-api.chrislewis.me.uk
+export SERVER_URL=https://$PROJECT_NAME-api.chrislewis.me.uk
 export AWS_DEFAULT_REGION=us-east-1
 
 echo "Using aws profile $AWS_PROFILE"
