@@ -1,0 +1,16 @@
+[
+  {
+    "cpu": "512",
+    "environment": [],
+    "essential": true,
+    "image": "${image_url}",
+    "memoryReservation": "512",
+    "name": "${container_name}",
+    "portMappings": [
+      {
+        "containerPort": 5500,
+        "hostPort": 5500
+      }
+    ]
+  }
+]
