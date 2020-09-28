@@ -8,7 +8,15 @@ resource "aws_security_group" "server_sg" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [data.aws_vpc.selected.cidr_block]
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "From VPC"
+    from_port   = 5500
+    to_port     = 5500
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
