@@ -44,7 +44,7 @@ python3 -m http.server
 Deployment is done using a mix of Terraform and the AWS CLI:
 
 ```bash
-./delpy.sh
+./deploy.sh
 ```
 
 
