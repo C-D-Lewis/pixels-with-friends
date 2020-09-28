@@ -3,6 +3,7 @@ module "main" {
   region       = var.region
   project_name = var.project_name
   vpc_id       = var.vpc_id
+  zone_id      = var.zone_id
 }
 
 provider "aws" {

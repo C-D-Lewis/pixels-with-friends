@@ -2,26 +2,28 @@
 
 set -eu
 
-echo "Using aws profile $AWS_PROFILE"
-echo "Server is at $SERVER_URL"
 
 COMMIT=$(git rev-parse --short HEAD)
 BUCKET=s3://pixels.chrislewis.me.uk
-ECR_NAME=pixels-with-friends-server-ecr
-IMAGE_NAME=pixels-with-friends
+PROJECT_NAME=pixels-with-friends
+ECR_NAME=$PROJECT_NAME-server-ecr
+SERVER_URL=$PROJECT_NAME-api.chrislewis.me.uk
+
+echo "Using aws profile $AWS_PROFILE"
+echo "Server is at $SERVER_URL"
 
 # Deploy infrastructure
 export AWS_DEFAULT_REGION=us-east-1
 ./pipeline/deploy-infra.sh
 
 # Deploy server container image
-./pipeline/build-server.sh $IMAGE_NAME $COMMIT
+./pipeline/build-server.sh $PROJECT_NAME $COMMIT
 
 # Push to ECR
 $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
 RES=$(aws ecr describe-repositories --repository-names $ECR_NAME)
 ECR_URI="$(echo $RES | jq -r '.repositories[0].repositoryUri')"
-./pipeline/push-server.sh $IMAGE_NAME $ECR_URI $COMMIT
+./pipeline/push-server.sh $PROJECT_NAME $ECR_URI $COMMIT
 
 exit 0
 

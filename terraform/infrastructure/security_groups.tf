@@ -5,8 +5,8 @@ resource "aws_security_group" "server_sg" {
 
   ingress {
     description = "From VPC"
-    from_port   = 5500
-    to_port     = 5500
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = [data.aws_vpc.selected.cidr_block]
   }

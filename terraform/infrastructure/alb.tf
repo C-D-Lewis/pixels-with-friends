@@ -16,8 +16,10 @@ resource "aws_lb_target_group" "server_tg" {
 
 resource "aws_lb_listener" "server_alb_listener" {
   load_balancer_arn = aws_lb.server_alb.arn
-  port              = 5500
-  protocol          = "HTTP"
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = "arn:aws:acm:us-east-1:617929423658:certificate/a69e6906-579e-431d-9e4c-707877d325b7"
 
   default_action {
     type             = "forward"

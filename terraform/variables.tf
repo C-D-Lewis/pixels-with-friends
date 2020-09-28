@@ -15,3 +15,9 @@ variable "vpc_id" {
   description = "VPC to deploy into"
   default     = "vpc-c3b70bb9"
 }
+
+variable "zone_id" {
+  type        = string
+  description = "Route53 zone ID"
+  default     = "Z05682866H59A0KFT8S"
+}

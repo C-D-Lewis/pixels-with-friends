@@ -7,7 +7,7 @@ ECR_URI=$2
 COMMIT=$3
 
 IMAGE="$IMAGE_NAME:$COMMIT"
-TARGET="$ECR_URI:master"  # Only want one image in the repo
+TARGET="$ECR_URI:latest"  # Only want one image in the repo
 
 docker tag $IMAGE $TARGET
 
