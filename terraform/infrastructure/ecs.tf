@@ -19,7 +19,7 @@ resource "aws_ecs_service" "ecs_service" {
   network_configuration {
     security_groups   = [aws_security_group.server_sg.id]
     subnets           = data.aws_subnet_ids.subnets.ids
-    assign_public_ip = true
+    assign_public_ip  = true
   }
 }
 
@@ -31,7 +31,7 @@ resource "aws_ecs_task_definition" "service_definition" {
   cpu                      = "512"
   memory                   = "1024"
   requires_compatibilities = ["FARGATE"]
-  container_definitions = <<DEFINITION
+  container_definitions    = <<DEFINITION
 [
   {
     "image": "${aws_ecr_repository.server_ecr.repository_url}:latest",
