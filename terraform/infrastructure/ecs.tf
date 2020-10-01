@@ -1,3 +1,7 @@
+resource "aws_ecr_repository" "server_ecr" {
+  name = "${var.project_name}-server-ecr"
+}
+
 resource "aws_ecs_cluster" "ecs_cluster" {
   name = "${var.project_name}-ecs-cluster"
 }
@@ -28,10 +32,10 @@ resource "aws_ecs_task_definition" "service_definition" {
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   network_mode             = "awsvpc"
-  cpu                      = "512"
-  memory                   = "1024"
+  cpu                      = "256"
+  memory                   = "512"
   requires_compatibilities = ["FARGATE"]
-  container_definitions    = <<DEFINITION
+  container_definitions    = <<EOF
 [
   {
     "image": "${aws_ecr_repository.server_ecr.repository_url}:latest",
@@ -45,5 +49,5 @@ resource "aws_ecs_task_definition" "service_definition" {
     }]
   }
 ]
-DEFINITION
+EOF
 }

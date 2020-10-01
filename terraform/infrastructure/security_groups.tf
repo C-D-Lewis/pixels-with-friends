@@ -4,7 +4,7 @@ resource "aws_security_group" "server_sg" {
   vpc_id      = data.aws_vpc.selected.id
 
   ingress {
-    description = "From VPC"
+    description = "HTTPS"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -12,7 +12,7 @@ resource "aws_security_group" "server_sg" {
   }
 
   ingress {
-    description = "From VPC"
+    description = "From ALB"
     from_port   = 5500
     to_port     = 5500
     protocol    = "tcp"

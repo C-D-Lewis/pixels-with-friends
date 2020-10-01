@@ -12,6 +12,8 @@ resource "aws_lb_target_group" "server_tg" {
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = data.aws_vpc.selected.id
+
+  depends_on = [aws_lb.server_alb]
 }
 
 resource "aws_lb_listener" "server_alb_listener" {

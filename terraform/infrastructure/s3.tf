@@ -3,7 +3,7 @@ resource "aws_s3_bucket" "client_bucket" {
   acl           = "public-read"
   force_destroy = true
 
-  policy = <<POLICY
+  policy = <<EOF
 {
   "Version":"2012-10-17",
   "Statement":[
@@ -16,7 +16,7 @@ resource "aws_s3_bucket" "client_bucket" {
     }
   ]
 }
-POLICY
+EOF
 
   website {
     index_document = "index.html"
