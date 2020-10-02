@@ -2,7 +2,7 @@
 
 Web based party game built with React including backend session server.
 
-![](screenshot.png)
+![](assets/screenshot.png)
 
 ## Server
 
@@ -40,6 +40,11 @@ python3 -m http.server
 ```
 
 ## Deployment
+
+![](assets/infra.png)
+
+Infrastructure in AWS includes a Fargate ECS service for the game server, and a
+CloudFront + S3 bucket website for the client files.
 
 Deployment is done using a mix of Terraform and the AWS CLI:
 
