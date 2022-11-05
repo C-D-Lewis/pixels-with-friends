@@ -12,12 +12,12 @@ const BOT_EASY_CHANCE = 10;
 const BOT_MEDIUM_CHANCE = 40;
 /** Max players */
 const MAX_PLAYERS = 8;
-/** Interval between lastSeen checks. */
-const PLAYER_LAST_SEEN_INTERVAL_MS = 5000;
 /** Max time after which a player is deemed MIA */
 const PLAYER_LAST_SEEN_MAX_MS = 10000;
 /** Number of bot levels */
 const NUM_BOT_LEVELS = 3;
+/** MongoDB collection name for rooms */
+const ROOM_COLLECTION = 'RoomDocument';
 
 /** Player colors - must sync */
 const PlayerColors = [
@@ -64,6 +64,7 @@ module.exports = {
   PLAYER_LAST_SEEN_MAX_MS,
   PLAYER_LAST_SEEN_INTERVAL_MS,
   NUM_BOT_LEVELS,
+  ROOM_COLLECTION,
   PlayerColors,
   SquareTypes,
   BotNames,

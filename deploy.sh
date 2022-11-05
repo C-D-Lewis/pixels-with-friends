@@ -15,7 +15,7 @@ echo "Using aws profile $AWS_PROFILE"
 echo "Server is at $SERVER_URL"
 
 # Deploy infrastructure
-./pipeline/deploy-infra.sh
+#./pipeline/deploy-infra.sh
 
 # Deploy server container image
 ./pipeline/build-server.sh $PROJECT_NAME $COMMIT

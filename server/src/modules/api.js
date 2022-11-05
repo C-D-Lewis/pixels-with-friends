@@ -1,11 +1,11 @@
-const { PLAYER_LAST_SEEN_INTERVAL_MS, PLAYER_LAST_SEEN_MAX_MS } = require('../constants');
+const { PLAYER_LAST_SEEN_MAX_MS } = require('../constants');
 const { endTurn } = require('./logic');
-const { rooms } = require('./data');
 
 /**
  * Update all rooms, handling dead players.
  */
-const updateRooms = () => {
+const removeDeadPlayers = () => {
+  const rooms = await 
   rooms.forEach((room) => {
     // If the room now has no human players, free it up
     if (room.players.length === 0 || room.players.every(p => p.botData)) {
@@ -34,11 +34,6 @@ const updateRooms = () => {
   });
 };
 
-/**
- * Monitor players for their pings and remove those not seen for a while.
- */
-const monitorPlayerLastSeen = () => setInterval(updateRooms, PLAYER_LAST_SEEN_INTERVAL_MS);
-
 module.exports = {
-  monitorPlayerLastSeen,
+  removeDeadPlayers,
 };
